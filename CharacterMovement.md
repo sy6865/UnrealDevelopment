@@ -49,5 +49,17 @@ UCharacterMovementComponent::ComputeFloorDist:\
 ![image](https://github.com/user-attachments/assets/b9fb8a91-434c-4074-a7b5-fbf173250f7f)\
 如果卡墙了或者角度不够, 之后还会打一条额外增加了Pawn的HalfHeight的LineTrace:
 ![image](https://github.com/user-attachments/assets/372682ed-c6c7-437c-a7c2-d17e7927de38)\
-至此整个ComputeFloorDist流程结束
+至此整个ComputeFloorDist流程结束, 来到FindFloor的可栖息(perch)范围验证阶段
+
+验证胶囊体是否处于perch范围, 由PerchRadiusThreshold属性来控制, 默认这个值为0，移动组件会忽略这个可站立半径的相关计算，一旦这个值大于0.15，就会做进一步的判断看看当前的地面空间是否足够让玩家站立在上面:
+![image](https://github.com/user-attachments/assets/05b0f88a-25d5-4ca1-b60c-5e897a548162)
+UCharacterMovementComponent::ShouldComputePerchResult:\
+![image](https://github.com/user-attachments/assets/6b20cd8a-7339-4b3a-9153-d9e474ebcc90)
+
+UCharacterMovementComponent::ComputePerchResult:\
+计算perch通过加大检测距离来加大胶囊体sweep检测的幅度, 因为胶囊体下半部圆弧与胶囊体真正底部有高度差
+![image](https://github.com/user-attachments/assets/a5de5255-d207-4116-8ff1-f5ba531ef2b4)\
+至此整个FindFloor流程结束
+
+
 
