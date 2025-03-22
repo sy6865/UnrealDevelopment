@@ -25,7 +25,7 @@ UPawnMovementComponent组件开始可以和玩家交互, 提供了AddInputVector
 ![image](https://github.com/user-attachments/assets/2ee623e4-ec92-4528-8fcb-fc5ce0e3cc27)
 <br><br>
 
-##### 3.1.2FindFloor流程分析:
+##### 3.1.2FindFloor流程分析
 FindFloor本质上就是通过胶囊体的Sweep检测来找到脚下的地面，所以地面必须要有物理数据，而且通道类型要设置与玩家的Pawn有Block响应。这里还有一些小的细节，比如我们在寻找地面的时候，只考虑脚下位置附近的，而忽略掉腰部附近的物体\
 Sweep用的是胶囊体而不是射线检测，方便处理斜面移动，计算可站立半径等
 <br><br>
