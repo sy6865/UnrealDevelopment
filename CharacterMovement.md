@@ -5,7 +5,7 @@
 
 ### 2.关系图
 #### 2.1继承树
-![image](https://github.com/user-attachments/assets/9a53a53b-2149-488a-b092-a654a0749a25)
+![image](https://github.com/user-attachments/assets/9a53a53b-2149-488a-b092-a654a0749a25)\
 UPawnMovementComponent组件开始可以和玩家交互, 提供了AddInputVector()接收玩家输入, 玩家通过InputComponent组件绑定一个按键操作，然后在按键响应时调用Pawn的AddMovementInput接口，进而调用移动组件的AddInputVector()，调用结束后会通过ConsumeMovementInputVector()接口消耗掉该次操作的输入数值，完成一次移动操作
 
 最后到了UCharacterMovement, 是基于胶囊体实现的, 所以目前不带胶囊体的Actor是无法正常使用的
@@ -17,3 +17,33 @@ UPawnMovementComponent组件开始可以和玩家交互, 提供了AddInputVector
 
 ### 3.各个状态细节处理
 #### 3.1Walking
+##### 3.1.1CurrentFloor信息初始化, 由Possess触发
+![image](https://github.com/user-attachments/assets/2ee623e4-ec92-4528-8fcb-fc5ce0e3cc27)
+<br><br>
+
+##### 3.1.2FindFloor流程分析:
+FindFloor本质上就是通过胶囊体的Sweep检测来找到脚下的地面，所以地面必须要有物理数据，而且通道类型要设置与玩家的Pawn有Block响应。这里还有一些小的细节，比如我们在寻找地面的时候，只考虑脚下位置附近的，而忽略掉腰部附近的物体\
+Sweep用的是胶囊体而不是射线检测，方便处理斜面移动，计算可站立半径等
+<br><br>
+
+##### 3.1.3FindFloor详细流程
+UCharacterMovementComponent::FindFloor:\
+TraceDist大体由MaxStepHeight决定, 最小值为MAX_FLOOR_DIST, 默认值为2.4f, 是用来解决精度问题的:
+![image](https://github.com/user-attachments/assets/690313e9-6ce0-43aa-bd33-3edc4776ad85)
+
+先放一张胶囊体Sweep检测的示意图, 比LineTrace更好用于处理斜面检测:
+![image](https://github.com/user-attachments/assets/4566fcce-4d70-43d2-81d8-32bd0cdd6bdd)
+
+UCharacterMovementComponent::ComputeFloorDist:
+来到ComputeFloorDist函数中, 传入的SweepRadius为对应胶囊体的Radius:
+![image](https://github.com/user-attachments/assets/015339db-4e6c-4baa-812b-e4e1be0cd7f5)\
+获取Sweep参数并开始SweepTest, 起点为CapsuleLocation, 终点为TraceDist*重力方向(TraceDist之前主要由MaxStepHeight决定):
+![image](https://github.com/user-attachments/assets/8eb4e686-ef49-4c25-bbcc-3bb260ddd39f)\
+判定是否在可容忍的边缘范围中:
+![image](https://github.com/user-attachments/assets/2c34560c-1e65-4e39-bd92-dd77f591ecff)\
+判定卡墙(penetration)和坡度等条件, 通过则为检测到地面:
+![image](https://github.com/user-attachments/assets/b9fb8a91-434c-4074-a7b5-fbf173250f7f)\
+如果卡墙了或者角度不够, 之后还会打一条额外增加了Pawn的HalfHeight的LineTrace:
+![image](https://github.com/user-attachments/assets/372682ed-c6c7-437c-a7c2-d17e7927de38)\
+至此整个ComputeFloorDist流程结束
+
