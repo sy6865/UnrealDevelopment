@@ -38,7 +38,7 @@ TraceDist大体由MaxStepHeight决定, 最小值为MAX_FLOOR_DIST, 默认值为2
 先放一张胶囊体Sweep检测的示意图, 比LineTrace更好用于处理斜面检测:
 ![image](https://github.com/user-attachments/assets/4566fcce-4d70-43d2-81d8-32bd0cdd6bdd)
 
-UCharacterMovementComponent::ComputeFloorDist:
+UCharacterMovementComponent::ComputeFloorDist:\
 来到ComputeFloorDist函数中, 传入的SweepRadius为对应胶囊体的Radius:
 ![image](https://github.com/user-attachments/assets/015339db-4e6c-4baa-812b-e4e1be0cd7f5)\
 获取Sweep参数并开始SweepTest, 起点为CapsuleLocation, 终点为TraceDist*重力方向(TraceDist之前主要由MaxStepHeight决定):
