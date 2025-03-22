@@ -1,3 +1,6 @@
+## REFERENCE
+https://zhuanlan.zhihu.com/p/34257208
+
 ### 1.移动组件基本原理
 移动组件在初始化的时候会把胶囊体设置为移动基础组件UpdateComponent，随后的操作都是在计算UpdateComponent的位置
 当然，我们也并不是一定要设置胶囊体为UpdateComponent，对于DefaultPawn会把他的SphereComponent作为UpdateComponent
