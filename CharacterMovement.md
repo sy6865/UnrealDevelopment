@@ -66,4 +66,21 @@ UCharacterMovementComponent::ComputePerchResult:\
 在初始化过程中的FindFloor结束后, 紧接着进入AdjustFloorHeight流程:
 ![image](Assets/CharacterMovement/AdjustFloorHeight入口.png)
 
+UCharacterMovementComponent::AdjustFloorHeight:\
+首先如果CurrentFloor信息是通过LineTrace得到的(也就是ComputeFloorDist在胶囊体Sweep过程中发现卡墙/角度不对的情况时多做的LineTrace), 需要修改OldFloorDist为LineTrace的长度:
+![image](Assets/CharacterMovement/AdjustFloorHeight:LineTrace获得Floor的调整.png)
+
+最后处理浮空/卡墙, 将UpdatedComponent进行贴地处理:
+![image](Assets/CharacterMovement/AdjustFloorHeight:将UpdateComponent贴地.png)
+至此整个AdjustFloorHeight流程结束
+
+##### 3.1.5SetBaseFromFloor
+在初始化过程中的AdjustFloorHeight结束后, 紧接着进入SetBaseFromFloor流程:
+![image](Assets/CharacterMovement/SetBaseFromFloor入口.png)
+
+UCharacterMovementComponent::SetBase:\
+内部实现主要是判断是否为WalkableFloor, 然后进行不同参数的SetBase, 如果是需要强制用Attachment的Base, 会进行单独处理, 之后在Character类中会触发Base改变的委托, 主要是用来判断是否能站在其他Character头顶之类的行为, 代码比较简单不再赘述:
+![image](Assets/CharacterMovement/SetBase.png)
+至此整个初始化流程结束
+
 ##### 3.1.5Walking位移计算
