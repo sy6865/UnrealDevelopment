@@ -73,6 +73,7 @@ UCharacterMovementComponent::AdjustFloorHeight:\
 最后处理浮空/卡墙, 将UpdatedComponent进行贴地处理:
 ![image](Assets/CharacterMovement/AdjustFloorHeight:将UpdateComponent贴地.png)
 至此整个AdjustFloorHeight流程结束
+<br><br>
 
 ##### 3.1.5SetBaseFromFloor
 在初始化过程中的AdjustFloorHeight结束后, 紧接着进入SetBaseFromFloor流程:
@@ -82,5 +83,20 @@ UCharacterMovementComponent::SetBase:\
 内部实现主要是判断是否为WalkableFloor, 然后进行不同参数的SetBase, 如果是需要强制用Attachment的Base, 会进行单独处理, 之后在Character类中会触发Base改变的委托, 主要是用来判断是否能站在其他Character头顶之类的行为, 代码比较简单不再赘述:
 ![image](Assets/CharacterMovement/SetBase.png)
 至此整个初始化流程结束
+<br><br>
 
-##### 3.1.5Walking位移计算
+##### 3.1.6PhysWalking
+来到正式流程的PhysWalking阶段:
+![image](Assets/CharacterMovement/PhysWalking调用堆栈.png)
+
+UCharacterMovementComponent::PhysWalking:\
+上来就是一堆有效性/初始化相关的代码, 直接略过来到注释Perform the move的位置:
+![image](Assets/CharacterMovement/PhysWalking:状态缓存阶段.png)\
+为了表现的更为平滑流畅, UE把一个Tick的移动分成了N段处理(每段的时间不能超过MaxSimulationTimeStep). 在处理每段时, 首先把当前的位置信息/地面信息记录下来, 把速度也做一些处理操作再缓存下来
+
+然后来到Apply对应速度的阶段, 如果没有使用RootMotion会先来到CalcVelocity的速度计算阶段:\
+![image](Assets/CharacterMovement/CalcVelocity入口.png)
+
+UCharacterMovementComponent::CalcVelocity:
+首先根据不同条件获取对应的速度相关值:\
+![image](Assets/CharacterMovement/CalcVelocity:速度相关值获取过程.png)
