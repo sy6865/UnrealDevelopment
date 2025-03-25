@@ -69,7 +69,6 @@ UCharacterMovementComponent::ComputePerchResult:\
 UCharacterMovementComponent::AdjustFloorHeight:\
 首先如果CurrentFloor信息是通过LineTrace得到的(也就是ComputeFloorDist在胶囊体Sweep过程中发现卡墙/角度不对的情况时多做的LineTrace), 需要修改OldFloorDist为LineTrace的长度:
 ![image](Assets/CharacterMovement/AdjustFloorHeight:LineTrace获得Floor的调整.png)
-
 最后处理浮空/卡墙, 将UpdatedComponent进行贴地处理:
 ![image](Assets/CharacterMovement/AdjustFloorHeight:将UpdateComponent贴地.png)
 至此整个AdjustFloorHeight流程结束
@@ -94,9 +93,22 @@ UCharacterMovementComponent::PhysWalking:\
 ![image](Assets/CharacterMovement/PhysWalking:状态缓存阶段.png)\
 为了表现的更为平滑流畅, UE把一个Tick的移动分成了N段处理(每段的时间不能超过MaxSimulationTimeStep). 在处理每段时, 首先把当前的位置信息/地面信息记录下来, 把速度也做一些处理操作再缓存下来
 
-然后来到Apply对应速度的阶段, 如果没有使用RootMotion会先来到CalcVelocity的速度计算阶段:\
+然后来到Apply对应加速度/摩擦力的阶段, 如果没有使用RootMotion会先来到CalcVelocity的速度计算阶段:\
 ![image](Assets/CharacterMovement/CalcVelocity入口.png)
 
-UCharacterMovementComponent::CalcVelocity:
-首先根据不同条件获取对应的速度相关值:\
+UCharacterMovementComponent::CalcVelocity:\
+首先根据不同条件获取对应的速度相关值:
 ![image](Assets/CharacterMovement/CalcVelocity:速度相关值获取过程.png)
+接着来到摩擦力相关处理:
+![image](Assets/CharacterMovement/CalcVelocity:摩擦力相关处理.png)
+再来到加速度相关处理:
+![image](Assets/CharacterMovement/CalcVelocity:加速度相关处理.png)
+至此整个CalcVelocity流程结束, 速度计算完成
+
+CalcVelocity处理的是不带RootMotion的情况, 接着来到带RootMotion的情况:
+![image](Assets/CharacterMovement/ApplyRootMotionToVelocity入口.png)
+简单来说就是应用动画Root骨骼的曲线来进行速度应用, RootMotion处理运动之后可能会跳出当前的PhysWalking状态, 因为直接应用曲线来设置速度可能出现Z轴向上的情况之类的改变MovementMode而提前return, 具体的就不展开了
+
+处理完RootMotion之后来到MoveAlongFloor阶段, 也就是Character真正应用移动的位置:
+![image](Assets/CharacterMovement/MoveAlongFloor入口.png)
+先进行位置偏移计算, 如果偏移为0直接return, 偏移大于0进入MoveAlongFloor
