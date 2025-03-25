@@ -110,5 +110,7 @@ CalcVelocity处理的是不带RootMotion的情况, 接着来到带RootMotion的�
 简单来说就是应用动画Root骨骼的曲线来进行速度应用, RootMotion处理运动之后可能会跳出当前的PhysWalking状态, 因为直接应用曲线来设置速度可能出现Z轴向上的情况之类的改变MovementMode而提前return, 具体的就不展开了
 
 处理完RootMotion之后来到MoveAlongFloor阶段, 也就是Character真正应用移动的位置:
-![image](Assets/CharacterMovement/MoveAlongFloor入口.png)
+![image](Assets/CharacterMovement/MoveAlongFloor入口.png)\
 先进行位置偏移计算, 如果偏移为0直接return, 偏移大于0进入MoveAlongFloor
+
+UCharacterMovementComponent::MoveAlongFloor:\
