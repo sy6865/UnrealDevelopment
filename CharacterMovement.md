@@ -35,9 +35,6 @@ UCharacterMovementComponent::FindFloor:\
 TraceDist大体由MaxStepHeight决定, 最小值为MAX_FLOOR_DIST, 默认值为2.4f, 是用来解决精度问题的:
 ![image](Assets/CharacterMovement/FindFloor:计算FloorSweepTraceDist.png)
 
-先放一张胶囊体Sweep检测的示意图, 比LineTrace更好用于处理斜面检测:
-![image](Assets/CharacterMovement/胶囊体Sweep与LineTrace.png)
-
 UCharacterMovementComponent::ComputeFloorDist:\
 来到ComputeFloorDist函数中, 传入的SweepRadius为对应胶囊体的Radius:
 ![image](Assets/CharacterMovement/ComputeFloorDist入口.png)\
@@ -114,3 +111,11 @@ CalcVelocity处理的是不带RootMotion的情况, 接着来到带RootMotion的�
 先进行位置偏移计算, 如果偏移为0直接return, 偏移大于0进入MoveAlongFloor
 
 UCharacterMovementComponent::MoveAlongFloor:\
+先将速度取水平方向, 然后进入ComputeGroundMovementDelta:
+![image](Assets/CharacterMovement/ComputeGroundMovementDelta入口.png)
+
+UCharacterMovementComponent::ComputeGroundMovementDelta:\
+先放一张胶囊体Sweep检测的示意图, 可以看到ImpactNormal和Normal的区别用于处理斜面检测:
+![image](Assets/CharacterMovement/胶囊体Sweep与LineTrace.png)
+再回到ComputeGroundMovementDelta这个函数, 主要处理的是输入的水平移动量转到平行于斜面移动量的过程:
+![image](Assets/CharacterMovement/ComputeGroudMovementDelta:水平速度转斜面速度相关处理.png)
