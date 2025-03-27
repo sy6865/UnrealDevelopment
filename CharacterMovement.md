@@ -137,6 +137,6 @@ UMovementComponent::SlideAlongSurface:\
 ![image](Assets/CharacterMovement/UMovementComponent::SlideAlongSurface:沿平面方向移动.png)
 
 UMovementComponent:TwoWallAdjust:\
-这个函数主要处理的是靠墙的判断, 小于90°的墙会额外处理, 使Character提前沿墙面的水平方向移动而避免胶囊体上部穿模:\
-![image](Assets/CharacterMovement/UMovementComponent::SlideAlongSurface斜面平行法线计算示意图.png)
-![image](Assets/CharacterMovement/TwoWallAdjust:处理靠墙情况.png)
+这个函数主要处理的是同时靠两面墙的判断:
+![image](Assets/CharacterMovement/TwoWallAdjust计算示意图.png)
+![image](Assets/CharacterMovement/TwoWallAdjust处理同时靠两面墙的情况.png)
