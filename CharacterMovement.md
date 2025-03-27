@@ -119,3 +119,24 @@ UCharacterMovementComponent::ComputeGroundMovementDelta:\
 ![image](Assets/CharacterMovement/胶囊体Sweep与LineTrace.png)
 再回到ComputeGroundMovementDelta这个函数, 主要处理的是输入的水平移动量转到平行于斜面移动量的过程:
 ![image](Assets/CharacterMovement/ComputeGroudMovementDelta:水平速度转斜面速度相关处理.png)
+
+接下来来到SafeMoveUpdatedComponent:
+![image](Assets/CharacterMovement/SafeMoveUpdatedComponent入口.png)
+代码里主要是调用了SceneComponent的MoveComponent, 并且根据Sweep结果处理穿墙的情况, 代码比较简单就不展开了
+
+回到MoveAlongFloor中, 当经过SafeMoveUpdatedComponent之后, 检测道bStartPenetrating为true时, 可能是对应的Character一直是卡在墙里的状态, 进入下面的逻辑:
+![image](Assets/CharacterMovement/MoveAlongFloor:Hit.bStartPenetrating.png)
+HnadleImpact和OnCharacterStuckInGeometry都很简单, 就不展开了, 详细看一下SlideAlongSurface的实现
+
+UCharacterMovementComponent::SlideAlongSurface:\
+![image](Assets/CharacterMovement/UCharacterMovement::SlideAlongSurface.png)
+计算完成后进入父类的SlideAlongSurface:
+
+UMovementComponent::SlideAlongSurface:\
+先沿平面移动一小段, 如果再次命中阻挡, 来到TwoWallAdjust进行靠墙的判断:
+![image](Assets/CharacterMovement/UMovementComponent::SlideAlongSurface:沿平面方向移动.png)
+
+UMovementComponent:TwoWallAdjust:\
+这个函数主要处理的是靠墙的判断, 小于90°的墙会额外处理, 使Character提前沿墙面的水平方向移动而避免胶囊体上部穿模:\
+![image](Assets/CharacterMovement/UMovementComponent::SlideAlongSurface斜面平行法线计算示意图.png)
+![image](Assets/CharacterMovement/TwoWallAdjust:处理靠墙情况.png)
