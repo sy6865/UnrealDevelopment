@@ -152,9 +152,22 @@ UMovementComponent:TwoWallAdjust:\
 抵住墙壁后, 先判断CanStepUp, 主要是判断命中的PrimitiveComponent上的CanCharacterStepUpOn等属性, 过程比较简单就不展开了:
 ![image](Assets/CharacterMovement/StepUp入口.png)
 
-随后来到StepUp的阶段:\
+UCharacterMovementComponent::StepUp:\
+随后来到StepUp的阶段:
 ![image](Assets/CharacterMovement/StepUp示意图.png)
 ![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp1.png)
 ![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp2.png)
 ![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp3.png)
 ![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp4.png)
+![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp5.png)
+![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp6.png)
+![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp7.png)
+至此整个StepUp阶段结束
+
+回到MoveAlongFloor中, 处理StepUp成功/失败之后的行为:
+![image](Assets/CharacterMovement/MoveAlongFloor:Hit.IsValidBlockingHit2.png)
+至此整个MoveAlongFloor结束, 回到PhysWalking中
+
+MoveAlongFloor结束后, 紧接着处理由MoveAlongFloor造成的MovementMode改变/地面信息改变等:
+![image](Assets/CharacterMovement/PhysWalking:MoveAlongFloor后的MovementMode和地面信息处理.png)
+
