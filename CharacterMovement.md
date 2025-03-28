@@ -171,3 +171,13 @@ UCharacterMovementComponent::StepUp:\
 MoveAlongFloor结束后, 紧接着处理由MoveAlongFloor造成的MovementMode改变/地面信息改变等:
 ![image](Assets/CharacterMovement/PhysWalking:MoveAlongFloor后的MovementMode和地面信息处理.png)
 
+再接着处理在悬崖边缘的移动, 这部分功能的开启由CharacterMovementComponent上的bCanWalkOffLedges变量控制, 先大致看一下过程:
+![image](Assets/CharacterMovement/PhysWalking:bCheckLedges.png)
+重点主要在GetLedgeMove上, 主要处理的是沿着悬崖边缘的移动行为:
+UCharacterMovementComponent::GetLedgeMove:
+![image](Assets/CharacterMovement/UCharacterMovementComponent::GetLedgeMove1.png)
+![image](Assets/CharacterMovement/UCharacterMovementComponent::GetLedgeMove2.png)
+其中再进一步查看CheckLedgeDirection的实现:\
+UCharacterMovementComponent::CheckLedgeDirection:
+![image](Assets/CharacterMovement/UCharacterMovementComponent::CheckLedgeDirection.png)
+至此整个沿悬崖边缘移动处理过程结束
