@@ -153,7 +153,7 @@ UMovementComponent:TwoWallAdjust:\
 ![image](Assets/CharacterMovement/StepUp入口.png)
 
 UCharacterMovementComponent::StepUp:\
-随后来到StepUp的阶段:
+随后来到StepUp的阶段:\
 ![image](Assets/CharacterMovement/StepUp示意图.png)
 ![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp1.png)
 ![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp2.png)
@@ -180,4 +180,13 @@ UCharacterMovementComponent::GetLedgeMove:
 其中再进一步查看CheckLedgeDirection的实现:\
 UCharacterMovementComponent::CheckLedgeDirection:
 ![image](Assets/CharacterMovement/UCharacterMovementComponent::CheckLedgeDirection.png)
-至此整个沿悬崖边缘移动处理过程结束
+沿悬崖边缘移动处理过程结束
+
+接着开始处理可以掉下悬崖的情况:
+![image](Assets/CharacterMovement/PhysWalking:!bCheckLedges1.png)
+![image](Assets/CharacterMovement/PhysWalking:!bCheckLedges2.png)
+至此整个悬崖边缘的处理过程结束
+
+在PhysWalking的最后, 会将计算得出的速度转到水平方向:
+![image](Assets/CharacterMovement/PhysWalking:MaintainHorizontalGroundVelocity.png)
+至此整个PhysWalking结束
