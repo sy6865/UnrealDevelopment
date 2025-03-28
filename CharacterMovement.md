@@ -140,3 +140,21 @@ UMovementComponent:TwoWallAdjust:\
 这个函数主要处理的是同时靠两面墙的判断:
 ![image](Assets/CharacterMovement/TwoWallAdjust计算示意图.png)
 ![image](Assets/CharacterMovement/TwoWallAdjust处理同时靠两面墙的情况.png)
+
+在TwoWallAdjust之后使用调整后的SlideDelta再进行一次移动, 同样会判断与初始的Delta方向是否一致:\
+![image](Assets/CharacterMovement/UMovementComponent::SlideAlongSurface:沿调整后的SlideDelta移动.png)
+至此整个SlideAlongSurface结束
+
+回到MoveAlongFloor中, 接下来进入撞墙时的情况:
+先往剩余的空间移动一小段距离, 抵住墙壁:
+![image](Assets/CharacterMovement/MoveAlongFloor:Hit.IsValidBlockingHit1.png)
+
+抵住墙壁后, 先判断CanStepUp, 主要是判断命中的PrimitiveComponent上的CanCharacterStepUpOn等属性, 过程比较简单就不展开了:
+![image](Assets/CharacterMovement/StepUp入口.png)
+
+随后来到StepUp的阶段:\
+![image](Assets/CharacterMovement/StepUp示意图.png)
+![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp1.png)
+![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp2.png)
+![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp3.png)
+![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp4.png)
