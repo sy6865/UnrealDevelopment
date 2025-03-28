@@ -129,7 +129,7 @@ UCharacterMovementComponent::ComputeGroundMovementDelta:\
 HnadleImpact和OnCharacterStuckInGeometry都很简单, 就不展开了, 详细看一下SlideAlongSurface的实现
 
 UCharacterMovementComponent::SlideAlongSurface:\
-![image](Assets/CharacterMovement/UCharacterMovement::SlideAlongSurface.png)
+![image](Assets/CharacterMovement/UCharacterMovementComponent::SlideAlongSurface.png)
 计算完成后进入父类的SlideAlongSurface:
 
 UMovementComponent::SlideAlongSurface:\
@@ -155,13 +155,13 @@ UMovementComponent:TwoWallAdjust:\
 UCharacterMovementComponent::StepUp:\
 随后来到StepUp的阶段:\
 ![image](Assets/CharacterMovement/StepUp示意图.png)
-![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp1.png)
-![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp2.png)
-![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp3.png)
-![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp4.png)
-![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp5.png)
-![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp6.png)
-![image](Assets/CharacterMovement/UCharacterMovementComponent::StepUp7.png)
+![image](Assets/CharacterMovement/StepUp1.png)
+![image](Assets/CharacterMovement/StepUp2.png)
+![image](Assets/CharacterMovement/StepUp3.png)
+![image](Assets/CharacterMovement/StepUp4.png)
+![image](Assets/CharacterMovement/StepUp5.png)
+![image](Assets/CharacterMovement/StepUp6.png)
+![image](Assets/CharacterMovement/StepUp7.png)
 至此整个StepUp阶段结束
 
 回到MoveAlongFloor中, 处理StepUp成功/失败之后的行为:
@@ -175,8 +175,8 @@ MoveAlongFloor结束后, 紧接着处理由MoveAlongFloor造成的MovementMode�
 ![image](Assets/CharacterMovement/PhysWalking:bCheckLedges.png)
 重点主要在GetLedgeMove上, 主要处理的是沿着悬崖边缘的移动行为:
 UCharacterMovementComponent::GetLedgeMove:
-![image](Assets/CharacterMovement/UCharacterMovementComponent::GetLedgeMove1.png)
-![image](Assets/CharacterMovement/UCharacterMovementComponent::GetLedgeMove2.png)
+![image](Assets/CharacterMovement/GetLedgeMove1.png)
+![image](Assets/CharacterMovement/GetLedgeMove2.png)
 其中再进一步查看CheckLedgeDirection的实现:\
 UCharacterMovementComponent::CheckLedgeDirection:
 ![image](Assets/CharacterMovement/UCharacterMovementComponent::CheckLedgeDirection.png)
