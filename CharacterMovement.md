@@ -1,5 +1,6 @@
 ## REFERENCE
-https://zhuanlan.zhihu.com/p/34257208
+https://zhuanlan.zhihu.com/p/34257208\
+https://www.bearchild.top/2024/06/10/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/3C/%5BUE%5DCharacterMovement%E6%BA%90%E7%A0%81%E6%B5%85%E6%9E%90/
 <br><br><br>
 
 ### 1.移动组件基本原理
@@ -21,6 +22,7 @@ UPawnMovementComponent组件开始可以和玩家交互, 提供了AddInputVector
 
 ### 3.各个状态细节处理
 #### 3.1Walking
+![image](Assets/CharacterMovement/Walking.png)
 ##### 3.1.1CurrentFloor信息初始化, 由Possess触发
 ![image](Assets/CharacterMovement/默认初始化过程堆栈.png)
 <br><br>
@@ -190,3 +192,38 @@ UCharacterMovementComponent::CheckLedgeDirection:
 在PhysWalking的最后, 会将计算得出的速度转到水平方向:
 ![image](Assets/CharacterMovement/PhysWalking:MaintainHorizontalGroundVelocity.png)
 至此整个PhysWalking结束
+
+##### 3.1.7移动同步
+###### Autonomous同步的处理
+Autonomous相关同步处理主要在ReplicateMoveToServer中, 先放一张框架图:
+![image](Assets/CharacterMovement/ReplicateMoveToServer框架图.png)
+
+主要维护三种Move数据:
+OldMove: 当前还未被DS ACK的Move数据中, 最早的一次Move
+NewMove: 本次执行的Move
+PendingMove: 若某次NewMove还未进行同步(等待并包), 将其存储在PendingMove中, 等待下次同步带上该数据
+在CallServerMovePacked时, 打包三种Move同步
+
+Autonomous的移动处理主要在Tick的ReplicateMoveToServer中, 先判断LocalRole, 之后进入ReplicateMoveToServer:
+![image](Assets/CharacterMovement/ReplicateMoveToServer入口.png)
+
+先进行一些有效性判断和ClientData的生成:
+![image](Assets/CharacterMovement/ReplicateMoveToServer:有效性验证与创建ClientData.png)
+
+随后来到TimeStamp的更新:
+先检查是否要重置时间戳以提升浮点精度, 再应用ClientDeltaTime:
+![image](Assets/CharacterMovement/UpdateTimeStampAndDeltaTime:时间戳相关操作.png)
+
+再将客户端的DeltaTime应用成将会发送给Server的, 避免CharacterMovement用来计算的浮点误差越来越大最后导致位置矫正
+![image](Assets/CharacterMovement/UpdateTimeStampAndDeltaTime:确保客户端和服务器DeltaTime一致.png)
+TimeStamp更新结束
+
+接下来从移动缓存中获取ImportantMove, 通过检查移动缓存中的重要状态标记/检查MovementMode是否改变等, 最后再获取新的Move数据指针:
+![image](Assets/CharacterMovement/ReplicateMoveToServer:获取移动缓存中的重要移动.png)
+
+来到SetMoveFor, 主要是记录初始信息:
+![image](Assets/CharacterMovement/SetMoveFor1.png)
+![image](Assets/CharacterMovement/SetMoveFor2.png)
+
+接下来就是两个SavedMove的合并, 主要是把差异不大的输入信息合并, 用来减少传输带宽
+![image](Assets/CharacterMovement/CombineSavedMove.png)
