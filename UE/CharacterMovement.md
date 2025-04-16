@@ -69,7 +69,7 @@ UCharacterMovementComponent::ComputePerchResult:\
 
 UCharacterMovementComponent::AdjustFloorHeight:\
 首先如果CurrentFloor信息是通过LineTrace得到的(也就是ComputeFloorDist在胶囊体Sweep过程中发现卡墙/角度不对的情况时多做的LineTrace), 需要修改OldFloorDist为LineTrace的长度:
-![image](../Assets/CharacterMovement/AdjustFloorHeight:LineTrace获得Floor的调整.png)
+![image](../Assets/CharacterMovement/AdjustFloorHeight:LineTrace获得Floor的调整.png)\
 最后处理浮空/卡墙, 将UpdatedComponent进行贴地处理:
 ![image](../Assets/CharacterMovement/AdjustFloorHeight:将UpdateComponent贴地.png)
 至此整个AdjustFloorHeight流程结束
