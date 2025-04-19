@@ -100,7 +100,7 @@ public:
 ##### 2.3.2属性信息注册
 先来到MyObject.gen.cpp中, 查看我们在UMyObject中声明的ClassProperty变量是如何被UHT处理的:
 ![image](../Assets/Reflection/ClassProperty信息生成.png)
-这里主要是定义了一个静态的FIntPropertyParams, 传入了名称、Flag、地址偏移等, 我们重点来看一下STRUCT_OFFSET这个宏
+这里主要是定义了一个静态的FIntPropertyParams, 传入了名称、Flag、地址偏移等, 我们重点来看一下STRUCT_OFFSET这个宏:
 ![image](../Assets/Reflection/STRUCT_OFFSET.png)\
 最后宏展开可以看到它是获取了对应UProperty变量在类中的地址偏移, 联想到平时用的反射接口, 正是通过这个地址偏移加上对应的对象实例地址, 来获得对象的对应UProperty数据:
 ![image](../Assets/Reflection/ContainerVoidPtrToValuePtrInternal.png)
