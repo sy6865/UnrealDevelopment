@@ -71,15 +71,16 @@ public:
 <br><br>
 
 #### 2.2反射代码注入机制
-首先来到MyObject.h的16行找到FMyStruct的GENERATED_BODY()宏:\
-![image](../Assets/Reflection/MyObject.h:MyStruct.png)\
+首先来到MyObject.h的39行找到UMyObject的GENERATED_BODY()宏:\
+![image](../Assets/Reflection/MyObject.h:UMyObject.png)\
 宏的定义在ObjectMacros.h中:
 ![image](../Assets/Reflection/GENERATED_BODY定义.png)
 编译之后, 再打开MyObject.generated.h
 首先能看到这一段代码:
-![image](../Assets/Reflection/MyObject.generated.h:MyStruct.png)\
+![image](../Assets/Reflection/MyObject.generated.h:UMyObject.png)\
 可以看到UE为每个类生成了一个专门的反射数据收集类, 以友元类的方式来访问类信息, 生成的友元类以Z_开头是为了在IDE的智能提示中排到最底下
 <br><br>
+
 #### 2.3反射信息收集
 ##### 2.3.1函数和类型信息注册
 来到MyObject.gen.cpp中, 找到IMPLEMENT_CLASS_NO_AUTO_REGISTRATION(UMyObject)宏:
