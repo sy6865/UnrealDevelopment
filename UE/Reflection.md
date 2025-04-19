@@ -110,9 +110,8 @@ public:
 
 之后再进行一系列的传递, 最终传递到构造的位置:
 ![image](../Assets/Reflection/ClassProperty信息传递1.png)
-
-最终所有信息都通过ClassInfo传递到了底端的FRegisterCompiledInInfo类型的static变量中
 ![image](../Assets/Reflection/ClassProperty信息传递2.png)
+最终所有信息都通过ClassInfo传递到了底端的FRegisterCompiledInInfo类型的static变量中
 
 我们再来看一下FRegisterCompiledInInfo这个类型的定义:
 ![image](../Assets/Reflection/FRegisterCompiledInInfo.png)\
