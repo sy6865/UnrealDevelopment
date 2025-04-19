@@ -101,7 +101,7 @@ public:
 先来到MyObject.gen.cpp中, 查看我们在UMyObject中声明的ClassProperty变量是如何被UHT处理的:
 ![image](../Assets/Reflection/ClassProperty信息生成.png)
 这里主要是定义了一个静态的FIntPropertyParams, 传入了名称、Flag、地址偏移等, 我们重点来看一下STRUCT_OFFSET这个宏
-![image](../Assets/Reflection/STRUCT_OFFSET.png)
+![image](../Assets/Reflection/STRUCT_OFFSET.png)\
 最后宏展开可以看到它是获取了对应UProperty变量在类中的地址偏移, 联想到平时用的反射接口, 正是通过这个地址偏移加上对应的对象实例地址, 来获得对象的对应UProperty数据:
 ![image](../Assets/Reflection/ContainerVoidPtrToValuePtrInternal.png)
 这也是C++中可以通过变量名找到蓝图中声名的对应的FProperty, 再取到对应的值的原理
@@ -113,14 +113,14 @@ public:
 ![image](../Assets/Reflection/ClassProperty信息传递2.png)
 
 我们再来看一下这个类型的定义:
-![image](../Assets/Reflection/FRegisterCompiledInInfo.png)
+![image](../Assets/Reflection/FRegisterCompiledInInfo.png)\
 继续深入来到RegisterCompiledInInfo的定义:
 ![image](../Assets/Reflection/RegisterCompiledInInfo.png)
 来到函数体的第三行的AddRegistration定义:
 ![image](../Assets/Reflection/AddRegistration.png)
-在这里我们的Class信息被收集到了Registrations这个数组中, 那么这些信息会在什么时候应用呢?答案是在UObject模块启动的时候
-先来到UObject模块启动的位置:
-![image](../Assets/Reflection/UClassRegisterAllCompiledInClasses入口.png)
+在这里我们的Class信息被收集到了Registrations这个数组中, 那么这些信息会在什么时候应用呢?答案是在UObject模块启动的时候\
+先来到UObject模块启动的位置:\
+![image](../Assets/Reflection/UClassRegisterAllCompiledInClasses入口.png)\
 再来到UClassRegisterAllCompiledInClasses这个函数的定义:
-![image](../Assets/Reflection/UClassRegisterAllCompiledInClasses定义.png)
-引擎在UObject模块启动的时候处理了收集到的这些类信息, 这也是UE的反射数据处理原理, 通过static构造函数来在全局main函数之前，执行反射系统的收集逻辑, 最后在UObject模块启动的阶段进行统一处理
+![image](../Assets/Reflection/UClassRegisterAllCompiledInClasses定义.png)\
+所以引擎在UObject模块启动的时候处理了收集到的这些类信息, 这也是UE的反射数据处理原理, 通过static构造函数来在全局main函数之前，执行反射系统的收集逻辑, 最后在UObject模块启动的阶段进行统一处理
