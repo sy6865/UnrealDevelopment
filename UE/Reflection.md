@@ -102,7 +102,9 @@ public:
 ![image](../Assets/Reflection/ClassProperty信息生成.png)
 这里主要是定义了一个静态的FIntPropertyParams, 传入了名称、Flag、地址偏移等, 我们重点来看一下STRUCT_OFFSET这个宏:
 ![image](../Assets/Reflection/STRUCT_OFFSET.png)\
-最后宏展开可以看到它是获取了对应UProperty变量在类中的地址偏移, 联想到平时用的反射接口, 正是通过这个地址偏移加上对应的对象实例地址, 来获得对象的对应UProperty数据:
+最后宏展开可以看到它是获取了对应UProperty变量在类中的地址偏移
+
+联想到平时用的反射接口, 正是通过这个地址偏移加上对应的对象实例地址, 来获得对象的对应UProperty数据:
 ![image](../Assets/Reflection/ContainerVoidPtrToValuePtrInternal.png)
 这也是C++中可以通过变量名找到蓝图中声名的对应的FProperty, 再取到对应的值的原理
 
@@ -118,7 +120,8 @@ public:
 ![image](../Assets/Reflection/RegisterCompiledInInfo.png)
 来到函数体的第三行的AddRegistration定义:
 ![image](../Assets/Reflection/AddRegistration.png)
-在这里我们的Class信息被收集到了Registrations这个数组中, 那么这些信息会在什么时候应用呢?答案是在UObject模块启动的时候\
+在这里我们的Class信息被收集到了Registrations这个数组中, 那么这些信息会在什么时候应用呢?答案是在UObject模块启动的时候
+
 先来到UObject模块启动的位置:\
 ![image](../Assets/Reflection/UClassRegisterAllCompiledInClasses入口.png)\
 再来到UClassRegisterAllCompiledInClasses这个函数的定义:
