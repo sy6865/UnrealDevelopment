@@ -123,4 +123,4 @@ public:
 ![image](../Assets/Reflection/UClassRegisterAllCompiledInClasses入口.png)\
 再来到UClassRegisterAllCompiledInClasses这个函数的定义:
 ![image](../Assets/Reflection/UClassRegisterAllCompiledInClasses定义.png)\
-所以引擎在UObject模块启动的时候处理了收集到的这些类信息, 这也是UE的反射数据处理原理, 通过static构造函数来在全局main函数之前，执行反射系统的收集逻辑, 最后在UObject模块启动的阶段进行统一处理
+所以引擎在UObject模块启动的时候处理了收集到的这些类信息, 这也是UE的反射数据处理原理, 通过static对象的构造函数来在全局main函数之前，执行反射系统的收集逻辑, 最后在UObject模块启动的阶段进行统一处理
