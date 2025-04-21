@@ -32,7 +32,7 @@ MyObject.h:
 UENUM()
 enum class EMyEnum
 {
-    Enum1 = 1,
+	Enum1 = 1,
 	Enum2 = 2,
 };
 
@@ -55,7 +55,7 @@ class IMyInterface
 {
 	GENERATED_BODY()
 public:
-    UFUNCTION()
+	UFUNCTION()
 	virtual void InterfaceTestFunction();
 };
 
