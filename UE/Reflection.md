@@ -66,7 +66,7 @@ class REFLECTIONTEST_API UMyObject : public UObject
 	
 public:
 	UFUNCTION()
-	void ClassFunction() {};
+	int ClassFunction(int IntParam) { return 0; }
 
 	UPROPERTY()
 	int ClassProperty;
@@ -86,7 +86,7 @@ public:
 <br><br>
 
 #### 2.3反射信息收集
-##### 2.3.1类型信息和UFUNCTION注册
+##### 2.3.1类型信息注册
 来到MyObject.gen.cpp中, 找到IMPLEMENT_CLASS_NO_AUTO_REGISTRATION(UMyObject)宏:
 ![image](../Assets/Reflection/MyObject.gen.cpp:IMPLEMENT_CLASS.png)\
 这个宏展开结果如下:
@@ -96,10 +96,6 @@ public:
 接下来来到Class.cpp的GetPrivateStaticClassBody函数中:
 ![image](../Assets/Reflection/GetPrivateStaticClassBody.png)
 这里主要是对类型信息进行注册
-
-最后一行通过传入的RegisterNativeFunc这个函数指针找到在MyObject.gen.cpp中的定义
-![image](../Assets/Reflection/StaticRegisterNativesUMyObject.png)\
-可以看到这里添加了函数名->函数地址的键值对
 <br><br>
 
 ##### 2.3.2UPROPERTY信息收集
@@ -135,3 +131,51 @@ public:
 <br><br>
 
 ##### 2.3.2UFUNCTION信息收集
+![image](../Assets/Reflection/GetPrivateStaticClassBody.png)
+先来到类型信息注册的最后一行, 通过传入的RegisterNativeFunc这个函数指针找到在MyObject.gen.cpp中的定义
+![image](../Assets/Reflection/StaticRegisterNativesUMyObject.png)\
+可以看到这里添加了函数名->函数地址的键值对
+
+接下来我们看看execClassFunction这个函数的定义
+![image](../Assets/Reflection/execClassFunction1.png)\
+宏展开之后得到
+![image](../Assets/Reflection/execClassFunction2.png)
+可以看到引擎声明了一个exec开头的包装函数, 供蓝图虚拟机使用, 内部还是调用的原生的函数
+
+接下来看一下引擎对参数和返回值的处理
+![image](../Assets/Reflection/execClassFunction3.png)
+这里又是获取变量在类内的地址偏移, 来达到运行时动态获取反射属性数据的目的, 可以联想到平时在业务中写的使用C++调用蓝图函数的场景:
+![image](../Assets/Reflection/ProcessEvent.png)\
+ProcessEvent传递进去的参数结构体其实就是对应gen.cpp里声明的参数结构体, 引擎底层也是通过反射数据中的地址偏移来从传入的结构体获取参数值
+
+这些信息最后被用来构造成一个UFunction, 同时它也是一个UObject属性存在于UClass上, 详情可以看FindFunctionByName, 这里不再赘述:
+![image](../Assets/Reflection/execClassFunction4.png)
+UFunction信息传入UClass的位置:
+![image](../Assets/Reflection/PassFuncInfo1.png)
+![image](../Assets/Reflection/PassFuncInfo2.png)
+至此整个UFUNCTION信息收集流程结束
+<br><br>
+
+以上内容主要是针对UMyObject的反射信息, 接下来简略看一下引擎的其它反射类型的信息收集
+##### 2.3.3USTRUCT信息收集
+UStruct中不能包含UFUNCTION的反射函数, 只允许C++原生函数, 其他内容和UObject相差不大, 最后注册返回的是一个UScriptStruct:
+![image](../Assets/Reflection/MyObject.gen.cpp:FMyStruct.png)
+<br><br>
+
+##### 2.3.4UINTERFACE信息收集
+UINTERFACE定义时就比较不一样, 需要定义两个类, 一个是UMyInterface类, 继承UInterface, 其中什么数据都没有. 另一个是IMyInterface类, 什么都不继承
+
+UMyInterface类生成的代码与UMyObject基本是一样的, 只是声明了一个反射类. 区别只是设置了ClassFlag为CLASS_Abstract和CLASS_Interface：
+![image](../Assets/Reflection/MyObject.generated.h:UInterface1.png)
+IMyInterface中也没做什么特殊处理, 只是把函数的实现放到了这个类中:
+![image](../Assets/Reflection/MyObject.gen.cpp:IMyInterface.png)\
+关键在于UMyInterface的反射信息传递的是IMyInterface中的函数:
+![image](../Assets/Reflection/MyObject.generated.h:UInterface2.png)
+所以为什么要用两个类来实现呢?
+因为接口是存在多继承的, 一个类有可能继承多个接口. 如果每个接口都是UObject, 会出现菱形继承的情况. 而菱形继承会大大扩张虚表的大小, 而且会造成二义性, 调用基类的函数需要显示声明, 这肯定是不现实的这个时候, UINTERFACE用两个类来实现, 就可以避免菱形继承的问题. 外部类如果要继承接口的话, 只能继承IMyInterface类
+
+另外这里还有一点值得注意: 如果一个类继承了UINTERFACE, 在InterfaceParams里面会传入多重继承的指针偏移offset(通过VTABLE_OFFSET获取), 因为接口是使用多继承, 因此需要通过指针偏移, 来根据Obj + Offset来获取接口地址调用接口函数
+<br><br>
+
+##### 2.3.4UENUM信息收集
+
