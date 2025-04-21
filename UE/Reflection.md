@@ -121,13 +121,13 @@ public:
 ![image](../Assets/Reflection/RegisterCompiledInInfo2.png)
 来到函数体的第三行的AddRegistration定义:
 ![image](../Assets/Reflection/AddRegistration.png)
-在这里我们的Class信息被收集到了Registrations这个数组中, 那么这些信息会在什么时候应用呢?答案是在UObject模块启动的时候
+在这里我们的Class信息被收集到了Registrations这个数组中, 那么这些信息会在什么时候应用呢? 答案是在UObject模块启动的时候
 
 先来到UObject模块启动的位置:\
 ![image](../Assets/Reflection/UClassRegisterAllCompiledInClasses入口.png)\
 再来到UClassRegisterAllCompiledInClasses这个函数的定义:
 ![image](../Assets/Reflection/UClassRegisterAllCompiledInClasses定义.png)\
-所以引擎在UObject模块启动的时候处理了收集到的这些类信息, 这也是UE的反射数据处理原理, 通过static对象的构造函数来在全局main函数之前，执行反射系统的收集逻辑, 最后在UObject模块启动的阶段进行统一处理
+所以引擎在UObject模块启动的时候处理了收集到的这些类信息, 这也是UE的反射数据处理原理, 通过static对象的构造函数来在全局main函数之前, 执行反射系统的收集逻辑, 最后在UObject模块启动的阶段进行统一处理
 <br><br>
 
 ##### 2.3.2UFUNCTION信息收集
