@@ -134,8 +134,8 @@ public:
 ![image](../Assets/Reflection/GetPrivateStaticClassBody.png)
 先来到类型信息注册的最后一行, 通过传入的RegisterNativeFunc这个函数指针找到在MyObject.gen.cpp中的定义
 ![image](../Assets/Reflection/StaticRegisterNativesUMyObject.png)\
-可以看到这里添加了函数名->函数地址的键值对
-
+可以看到这里添加了函数名->函数地址的键值对\
+\
 接下来我们看看execClassFunction这个函数的定义
 ![image](../Assets/Reflection/execClassFunction1.png)\
 宏展开之后得到
