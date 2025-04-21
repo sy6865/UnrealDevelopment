@@ -138,7 +138,7 @@ public:
 
 接下来我们看看execClassFunction这个函数的定义\
 ![image](../Assets/Reflection/execClassFunction1.png)\
-宏展开之后得到
+宏展开之后得到\
 ![image](../Assets/Reflection/execClassFunction2.png)
 可以看到引擎声明了一个exec开头的包装函数, 供蓝图虚拟机使用, 内部还是调用的原生的函数
 
@@ -178,4 +178,14 @@ IMyInterface中也没做什么特殊处理, 只是把函数的实现放到了这
 <br><br>
 
 ##### 2.3.4UENUM信息收集
+最后是枚举的收集, 这个不需要添加GENERATED_BODY宏, 所有的代码都在.gen.cpp文件中生成
+![image](../Assets/Reflection/MyObject.gen.cpp:EMyEnum1.png)
+构造位置:
+![image](../Assets/Reflection/MyObject.gen.cpp:EMyEnum2.png)
+值得注意的是我们在C++中获取枚举对应的名称字符串用来在UI中显示时, 经常会使用枚举类的StaticEnum这个接口, 这个接口返回的就是对应的UEnum对象:
+![image](../Assets/Reflection/MyObject.gen.cpp:EMyEnum3.png)
 
+对应的应用:\
+![image](../Assets/Reflection/GetNameByIndex.png)\
+其中GetNameByIndex中的枚举值对应枚举名字符串的信息就是在MyObject.gen.cpp中ConstructUEnum的构造期间被传入的, 有兴趣可以去看一下它的实现:
+![image](../Assets/Reflection/ConstructUEnum.png)
