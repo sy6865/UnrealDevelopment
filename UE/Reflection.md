@@ -11,6 +11,10 @@ https://zhuanlan.zhihu.com/p/24319968
 <br><br><br>
 
 ### 2.反射代码生成
+
+先来看一下基本的反射宏
+![image](../Assets/Reflection/反射宏.png)
+
 #### 2.1环境配置
 UHT扫描之后会生成.h和.cpp两个文件:
 .generated.h文件: 重载各种操作符函数, 声明各种构造函数
@@ -82,12 +86,12 @@ public:
 <br><br>
 
 #### 2.3反射信息收集
-##### 2.3.1函数和类型信息注册
+##### 2.3.1类型信息和UFUNCTION注册
 来到MyObject.gen.cpp中, 找到IMPLEMENT_CLASS_NO_AUTO_REGISTRATION(UMyObject)宏:
 ![image](../Assets/Reflection/MyObject.gen.cpp:IMPLEMENT_CLASS.png)\
 这个宏展开结果如下:
 ![image](../Assets/Reflection/MyObject.gen.cpp:IMPLEMENT_CLASS_UnFolded.png)\
-这段代码主要是传递当前类型的一些信息, 去构造UClass
+这段代码主要是传递当前类型的一些信息, 去构造UClass. 平时我们常用的StaticClass函数最终返回的也是这个函数, 可以在UObject声明位置的DECLARE_CLASS宏中查看, 这里不再赘述
 
 接下来来到Class.cpp的GetPrivateStaticClassBody函数中:
 ![image](../Assets/Reflection/GetPrivateStaticClassBody.png)
@@ -98,7 +102,7 @@ public:
 可以看到这里添加了函数名->函数地址的键值对
 <br><br>
 
-##### 2.3.2属性信息注册
+##### 2.3.2UPROPERTY信息收集
 先来到MyObject.gen.cpp中, 查看我们在UMyObject中声明的ClassProperty变量是如何被UHT处理的:
 ![image](../Assets/Reflection/ClassProperty信息生成.png)
 这里主要是定义了一个静态的FIntPropertyParams, 传入了名称、Flag、地址偏移等, 我们重点来看一下STRUCT_OFFSET这个宏:
@@ -117,7 +121,8 @@ public:
 我们再来看一下FRegisterCompiledInInfo这个类型的定义:
 ![image](../Assets/Reflection/FRegisterCompiledInInfo.png)\
 继续深入来到RegisterCompiledInInfo的定义:
-![image](../Assets/Reflection/RegisterCompiledInInfo.png)
+![image](../Assets/Reflection/RegisterCompiledInInfo1.png)
+![image](../Assets/Reflection/RegisterCompiledInInfo2.png)
 来到函数体的第三行的AddRegistration定义:
 ![image](../Assets/Reflection/AddRegistration.png)
 在这里我们的Class信息被收集到了Registrations这个数组中, 那么这些信息会在什么时候应用呢?答案是在UObject模块启动的时候
@@ -127,3 +132,6 @@ public:
 再来到UClassRegisterAllCompiledInClasses这个函数的定义:
 ![image](../Assets/Reflection/UClassRegisterAllCompiledInClasses定义.png)\
 所以引擎在UObject模块启动的时候处理了收集到的这些类信息, 这也是UE的反射数据处理原理, 通过static对象的构造函数来在全局main函数之前，执行反射系统的收集逻辑, 最后在UObject模块启动的阶段进行统一处理
+<br><br>
+
+##### 2.3.2UFUNCTION信息收集
