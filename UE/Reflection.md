@@ -139,7 +139,7 @@ public:
 接下来我们看看execClassFunction这个函数的定义\
 ![image](../Assets/Reflection/execClassFunction1.png)\
 宏展开之后得到\
-![image](../Assets/Reflection/execClassFunction2.png)
+![image](../Assets/Reflection/execClassFunction2.png)\
 可以看到引擎声明了一个exec开头的包装函数, 供蓝图虚拟机使用, 内部还是调用的原生的函数
 
 接下来看一下引擎对参数和返回值的处理
@@ -170,7 +170,7 @@ UMyInterface类生成的代码与UMyObject基本是一样的, 只是声明了一
 IMyInterface中也没做什么特殊处理, 只是把函数的实现放到了这个类中:
 ![image](../Assets/Reflection/MyObject.gen.cpp:IMyInterface.png)\
 关键在于UMyInterface的反射信息传递的是IMyInterface中的函数:
-![image](../Assets/Reflection/MyObject.generated.h:UInterface2.png)
+![image](../Assets/Reflection/MyObject.generated.h:UInterface2.png)\
 所以为什么要用两个类来实现呢?
 因为接口是存在多继承的, 一个类有可能继承多个接口. 如果每个接口都是UObject, 会出现菱形继承的情况. 而菱形继承会大大扩张虚表的大小, 而且会造成二义性, 调用基类的函数需要显示声明, 这肯定是不现实的这个时候, UINTERFACE用两个类来实现, 就可以避免菱形继承的问题. 外部类如果要继承接口的话, 只能继承IMyInterface类
 
@@ -180,12 +180,12 @@ IMyInterface中也没做什么特殊处理, 只是把函数的实现放到了这
 ##### 2.3.4UENUM信息收集
 最后是枚举的收集, 这个不需要添加GENERATED_BODY宏, 所有的代码都在.gen.cpp文件中生成
 ![image](../Assets/Reflection/MyObject.gen.cpp:EMyEnum1.png)
-构造位置:
+构造位置:\
 ![image](../Assets/Reflection/MyObject.gen.cpp:EMyEnum2.png)
 值得注意的是我们在C++中获取枚举对应的名称字符串用来在UI中显示时, 经常会使用枚举类的StaticEnum这个接口, 这个接口返回的就是对应的UEnum对象:
 ![image](../Assets/Reflection/MyObject.gen.cpp:EMyEnum3.png)
 
-对应的应用:\
+对应的应用场景:\
 ![image](../Assets/Reflection/GetNameByIndex.png)\
 其中GetNameByIndex中的枚举值对应枚举名字符串的信息就是在MyObject.gen.cpp中ConstructUEnum的构造期间被传入的, 有兴趣可以去看一下它的实现:
 ![image](../Assets/Reflection/ConstructUEnum.png)
