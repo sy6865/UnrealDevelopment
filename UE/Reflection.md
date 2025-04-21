@@ -32,44 +32,44 @@ MyObject.h:
 UENUM()
 enum class EMyEnum
 {
-	Enum1 = 1,
-	Enum2 = 2,
+    Enum1 = 1,
+    Enum2 = 2,
 };
 
 USTRUCT()
 struct FMyStruct
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	UPROPERTY()
-	float StructProperty;
+    UPROPERTY()
+    float StructProperty;
 };
 
 UINTERFACE()
 class UMyInterface : public UInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };
 
 class IMyInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 public:
-	UFUNCTION()
-	virtual void InterfaceTestFunction();
+    UFUNCTION()
+    virtual void InterfaceTestFunction();
 };
 
 UCLASS()
 class REFLECTIONTEST_API UMyObject : public UObject
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 	
 public:
-	UFUNCTION()
-	int ClassFunction(int IntParam) { return 0; }
+    UFUNCTION()
+    int ClassFunction(int IntParam) { return 0; }
 
-	UPROPERTY()
-	int ClassProperty;
+    UPROPERTY()
+    int ClassProperty;
 };
 ```
 <br><br>
