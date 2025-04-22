@@ -10,7 +10,7 @@ https://zhuanlan.zhihu.com/p/24319968
 ![image](../Assets/Reflection/UhtTokenBufferReader.png)
 <br><br><br>
 
-### 2.反射代码生成
+### 2.反射代码生成与信息收集
 
 先来看一下基本的反射宏
 ![image](../Assets/Reflection/反射宏.png)
