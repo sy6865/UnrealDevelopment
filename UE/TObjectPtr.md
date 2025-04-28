@@ -35,5 +35,13 @@ ObjectPtr是由传入的UObject指针来构造或者从其它TObjectPtr拷贝的
 
 FObjectHandle:
 ![image](../Assets/TObjectPtr/FObjectHandle成员变量.png)
-FObjectHandle的成员变量是一个UPTRINT, 翻到最底层的typedef发现是一个uint64
+在非编辑器下FObjectHandle对应的是一个UObject裸指针\
+在编辑器下FObjectHandle对应的是FObjectHandlePrivate, 它的成员变量是一个UPTRINT类型的PointerOrRef, 翻到最底层的typedef发现是一个uint64
 ![image](../Assets/TObjectPtr/UPTRINT.png)
+
+### 3.信息封装
+先来到反射信息的延迟注册阶段
+![image](../Assets/TObjectPtr/UObjectBase.cpp:DeferredRegister.png)
+在这里会给每个反射的UClass生成一个对应的UPackage
+
+如果对UE的反射系统不熟悉可以先看[Reflection](Reflection.md)
