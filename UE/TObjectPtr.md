@@ -25,7 +25,7 @@ https://zhuanlan.zhihu.com/p/504115127
 ![image](../Assets/TObjectPtr/TObjectPtr成员变量.png)
 可以看到它只包含了一个union, 由一个FObjectPtr和一个DebugPtr组成, DebugPtr是给调试器看的, 如果DebugPtr是奇数地址(即地址最低位是1), 说明该对象引用还没有解析(unresolved), 这时不能解引用它(即不能访问它指向的对象)
 
-再看一下ObjectPtr的赋值:
+再看一下ObjectPtr的赋值:\
 ![image](../Assets/TObjectPtr/ObjectPtr赋值.png)
 ObjectPtr是由传入的UObject指针来构造或者从其它TObjectPtr拷贝的, TObjectPtr的功能实现都在FObjectPtr类型的ObjectPtr变量中
 
@@ -34,14 +34,14 @@ ObjectPtr是由传入的UObject指针来构造或者从其它TObjectPtr拷贝的
 与TObjectPtr类似, FObjectPtr也只有一个成员变量, 类型是FObjectHandle
 
 FObjectHandle:
-![image](../Assets/TObjectPtr/FObjectHandle成员变量.png)
+![image](../Assets/TObjectPtr/FObjectHandle成员变量.png)\
 在非编辑器下FObjectHandle对应的是一个UObject裸指针\
-在编辑器下FObjectHandle对应的是FObjectHandlePrivate, 它的成员变量是一个UPTRINT类型的PointerOrRef, 翻到最底层的typedef发现是一个uint64
+在编辑器下FObjectHandle对应的是FObjectHandlePrivate, 它的成员变量是一个UPTRINT类型的PointerOrRef, 翻到最底层的typedef发现是一个uint64\
 ![image](../Assets/TObjectPtr/UPTRINT.png)
 
 ### 3.信息封装
-先来到反射信息的延迟注册阶段
-![image](../Assets/TObjectPtr/UObjectBase.cpp:DeferredRegister.png)
+先来到反射信息的延迟注册阶段\
+![image](../Assets/TObjectPtr/UObjectBase.cpp:DeferredRegister.png)\
 在这里会给每个反射的UClass生成一个对应的UPackage
 
 如果对UE的反射系统不熟悉可以先看[Reflection](Reflection.md)
