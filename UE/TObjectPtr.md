@@ -38,10 +38,13 @@ FObjectHandle:
 在非编辑器下FObjectHandle对应的是一个UObject裸指针\
 在编辑器下FObjectHandle对应的是FObjectHandlePrivate, 它的成员变量是一个UPTRINT类型的PointerOrRef, 翻到最底层的typedef发现是一个uint64\
 ![image](../Assets/TObjectPtr/UPTRINT.png)
+<br><br><br>
 
 ### 3.信息封装
-先来到反射信息的延迟注册阶段\
+先来到反射信息的延迟注册阶段(如果对UE的反射系统不熟悉可以先看[Reflection](Reflection.md))\
 ![image](../Assets/TObjectPtr/UObjectBase.cpp:DeferredRegister.png)\
 在这里会给每个反射的UClass生成一个对应的UPackage
 
-如果对UE的反射系统不熟悉可以先看[Reflection](Reflection.md)
+进一步来到CreatePackage阶段, 会线找对应的Package, 如果没有找到对应的Package会进行创建然后传递对应的UPackage*来到MakePackedObjectRef:
+![image](../Assets/TObjectPtr/UObjectGlobals.cpp:CreatePackage.png)
+
