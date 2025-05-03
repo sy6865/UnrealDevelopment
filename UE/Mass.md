@@ -33,7 +33,7 @@ ECS架构本身就是利用SOA提升Cache的命中率, 并利用SIMD指令来加
 
 ### 2.MASS框架
 ECS架构中E/C/S分别代表什么?
-把数据分成一个个Component, 然后由Component组成Entity, 才用System使用逻辑对Component进行处理:
+把数据分成一个个Component, 然后由Component组成Entity, 才用System使用逻辑对Component进行处理:\
 ![image](../Assets/Mass/EntityComponentSystemOverview.png)
 <br><br>
 
