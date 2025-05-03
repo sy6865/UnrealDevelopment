@@ -33,7 +33,7 @@ ECS架构本身就是利用SOA提升Cache的命中率, 并利用SIMD指令来加
 
 ### 2.MASS框架
 ECS架构中E/C/S分别代表什么?
-把数据分成一个个Component, 然后由Component组成Entity, 才用System使用逻辑对Component进行处理:\
+把数据分成一个个Component, 然后由Component组成Entity, 再用System使用逻辑对Component进行处理:\
 ![image](../Assets/Mass/EntityComponentSystemOverview.png)
 <br><br>
 
@@ -49,3 +49,15 @@ FMassSharedFragment是共享的布局\
 <br><br>
 
 #### 2.2Archetype
+Archetype定义:
+![image](../Assets/Mass/ArchetypeDefinition.png)
+一个Archetype由多个Fragment进行顺序无关的排列组合而成, 它是唯一的
+
+Archetype的存储:
+
+
+#### 2.3Entity
+Entity定义:
+![image](../Assets/Mass/EntityDefinition.png)
+一个EntityHandle由一个Index和一个SerialNumber组成, Index表示自己是在Archetype大数组中的哪一份, SerialNumber用来做数据校验, 作用就是某个Index上的Entity被删除后, 再创建个新的Entity, 如果原来Index指向的EntityData和EntityHandle序列号不匹配, 就可以明确EntityHandle指向的是老的Entity而不是新的, 这样就避免了只用Index标记Entity导致的冲突问题
+
