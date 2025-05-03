@@ -41,11 +41,11 @@ ECS架构中E/C/S分别代表什么?
 在Mass中, Fragment代表ECS中的Component, 因为Component这个名词在引擎里已经被占用了, Fragment自然代表的就是一个内存片段, 只包含最纯粹的数据:
 ![image](../Assets/Mass/FragmentDefinition.png)
 FMassFragment是定义每个Entity内部的数据结构\
-FMassChunkFragment是Chunk的额外内存数据, 每个Chunk内共享一份
-FMassSharedFragment是共享的布局
+FMassChunkFragment是Chunk的额外内存数据, 每个Chunk内共享一份\
+FMassSharedFragment是共享的布局\
 我们可以定义自己的Fragment继承自对应的MassFragment, 如果需要在编辑器内编辑, 可以对对应的变量加UPROPERTY宏. 如果需要加函数, 那么函数不能是虚函数, 因为对象地址开头的虚表指针会破坏ECS的范式
 
 总的来说, 如果FMassFragment可以理解为Entity的成员变量, 那FMassSharedFragment就可以理解为Entity的static成员变量, 而FMassChunkFragment可以理解为每个Chunk的static成员变量, Chunk具体在后文解答
 <br><br>
 
-#### 2.1Fragment
+#### 2.2Archetype
