@@ -47,18 +47,7 @@ FMassSharedFragment是共享的布局\
 ![image](../Assets/Mass/MassDataDefinition2.png)
 <br><br>
 
-#### 2.2FMassArchetypeCompositionDescriptor
-Descriptor:\
-以上数据的描述都存储在ArchetypeData的CompositionDescriptor中, 顾名思义它是用来描述内存中的数据排布:\
-![image](../Assets/Mass/FMassArchetypeData:CompositionDescriptor.png)\
-![image](../Assets/Mass/FMassArchetypeCompositionDescriptor.png)
-
-那么Descriptor是在什么时候创建的呢? 
-![image](../Assets/Mass/FMassArchetypeCompositionDescriptorConstruct.png)
-在CreateArchetype的时机会进行Descriptor的构造
-<br><br>
-
-#### 2.3Fragment
+#### 2.2Fragment
 在Mass中, Fragment代表ECS中的Component, 因为Component这个名词在引擎里已经被占用了, Fragment自然代表的就是一个内存片段, 只包含最纯粹的数据, 对应的数据保存在ArchetypeChunk的RawMemory中:
 ![image](../Assets/Mass/FMassArchetypeChunk2.png)
 关于FMassArchetypeChunk见后文的[Archetype的存储](#Archetype的存储)\
@@ -68,11 +57,11 @@ Descriptor:\
 总的来说, 如果FMassFragment可以理解为Entity的成员变量, 那FMassSharedFragment就可以理解为Entity的static成员变量, 而FMassChunkFragment可以理解为每个Chunk的static成员变量, Chunk具体在后文解答
 <br><br>
 
-#### 2.4MassTag
+#### 2.3MassTag
 FMassTag用来做Archetype的标签, 用来给Archetype分类, 比如敌军/友军AI, 他们的Archetype是一样的, 在之后的AI逻辑运算中就可以方便的用Tag对它们进行筛选
 <br><br>
 
-#### 2.5Archetype
+#### 2.4Archetype
 Archetype定义:
 ![image](../Assets/Mass/ArchetypeDefinition.png)
 一个Archetype由多个Fragment进行顺序无关的排列组合而成, 它是唯一的\
@@ -92,8 +81,52 @@ ChunkFragmentData: 独属于这一块Chunk的自定义附加数据, 用来给不
 SharedFragmentValues: 比如重力/摩擦力等整个系统只有一份的, 可以多个Chunk共享, 不同的Chunk可以携带不同的SharedFragmentValues, 也可以没有
 <br><br>
 
-#### 2.6Entity
+#### 2.5Entity
 Entity定义:\
 ![image](../Assets/Mass/EntityDefinition.png)
 一个EntityHandle由一个Index和一个SerialNumber组成, Index表示自己是在Archetype大数组中的哪一份, SerialNumber用来做数据校验, 作用就是某个Index上的Entity被删除后, 再创建个新的Entity, 如果原来Index指向的EntityData和EntityHandle序列号不匹配, 就可以明确EntityHandle指向的是老的Entity而不是新的, 这样就避免了只用Index标记Entity导致的冲突问题
+<br><br>
 
+#### 2.6FMassArchetypeCompositionDescriptor
+Descriptor:\
+以上数据的描述都存储在ArchetypeData的CompositionDescriptor中, 顾名思义它是用来描述内存中的数据排布:\
+![image](../Assets/Mass/FMassArchetypeData:CompositionDescriptor.png)\
+![image](../Assets/Mass/FMassArchetypeCompositionDescriptor.png)
+<br><br>
+
+#### 2.7数据初始化流程
+整个数据初始化的流程, 以Epic官方的CitySample项目为例\
+在CitySample项目中进入PIE, 先来看一下堆栈, 主要是从Player的生成与初始化开始的, 入口在Player上的UMassAgentComponent, 代码比较简单就不再赘述了, 放一下初始化堆栈:
+![image](../Assets/Mass/MassEntityTemplateInitStack.png)
+
+接下来直接来到关键部分, 在UMassAgentComponent注册时, 会返回给UMassAgentSubsystem一个对应的FMassEntityConfig
+![image](../Assets/Mass/RegisterAgentComponent.png)
+
+来到蓝图里面具体看一下这个EntityConfig, 它是UMassAgentComponent上面的一个属性:
+![image](../Assets/Mass/EntityConfig.png)
+可以看到有一个Parent属性, 里面对应了一个UMassEntityConfigAsset资产, 打开对应的资产, 资产里面对应的又是一个FMassEntityConfig属性
+![image](../Assets/Mass/MassPlayerCharacterAgentConfig.png)
+里面有Parent, 同时填写了一些Traits属性, 还有一个不允许修改的ConfigGuid
+
+看一下C++里FMassEntityConfig这个类:
+![image](../Assets/Mass/FMassEntityConfigDefinition.png)
+
+先讲一下Parent属性, 它就是一个Asset, 用来表示父类FMassEntityConfig, 后续会有一些递归行为用到
+
+Traits属性中直接挑第一个TrafficObstacle, 它只有一个BuildTemplate成员函数
+![image](../Assets/Mass/UMassTrafficObstacleTrait::BuildTemplate.png)
+代码非常简单, 就是向[BuildContext](#BuildContext)里面传入对应的Tag/Fragment之类的
+
+<a name="ConfigGuid"></a>
+先讲一下ConfigGuid的生成, 它是构造/在编辑器内复制的时候(因为编辑器中复制如果不重新申请就重复了)向系统申请的一个GUID
+![image](../Assets/Mass/FMassEntityConfigConstruct.png)
+
+FMassEntityConfig介绍完毕, 紧接着来到回到RegisterAgentComponent中, 来到EntityConfig.GetOrCreateEntityTemplate:
+![image](../Assets/Mass/FMassEntityConfig::GetOrCreateEntityTemplate.png)
+此处会创建一个FMassEntityTemplateData, 再创建一个<a name="BuildContext"></a>FMassEntityTemplateBuildContext, 并传入对应的TemplateData和TemplateID, TemplateID就是[之前构造/编辑器复制的时候向系统申请的一个GUID](#ConfigGuid)再经过一系列处理得到的
+
+来到下面的GetCombinedTraits函数中, 首先会记录访问过的Object
+![image](../Assets/Mass/GetCombinedTraits.png)
+
+再到GetCombinedTraitsInternal函数中, 这里主要是收集对应的Trait, 然后递归当前FMassEntityConfig的Parent
+![image](../Assets/Mass/GetCombinedTraitsInternal.png)
