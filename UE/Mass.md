@@ -118,7 +118,7 @@ Traits数组中直接挑第一个TrafficObstacle来到C++中看一下具体实�
 代码非常简单, 就是向[BuildContext](#BuildContext)里面传入对应的Tag/Fragment之类的
 
 <a name="ConfigGuid"></a>
-先讲一下ConfigGuid的生成, 它是构造/在编辑器内复制的时候(因为编辑器中复制如果不重新申请就重复了)向系统申请的一个GUID
+先讲一下ConfigGuid的生成, 它是构造/在编辑器内复制的时候(因为编辑器中复制如果不重新申请就重复了)向系统申请的一个GUID\
 ![image](../Assets/Mass/FMassEntityConfigConstruct.png)
 
 <a name="BuildContext"></a>
