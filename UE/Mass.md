@@ -83,7 +83,7 @@ SharedFragmentValues: 比如重力/摩擦力等整个系统只有一份的, 可�
 
 #### 2.5Entity
 Entity定义:\
-![image](../Assets/Mass/EntityDefinition.png)
+![image](../Assets/Mass/EntityDefinition.png)\
 一个EntityHandle由一个Index和一个SerialNumber组成, Index表示自己是在Archetype大数组中的哪一份, SerialNumber用来做数据校验, 作用就是某个Index上的Entity被删除后, 再创建个新的Entity, 如果原来Index指向的EntityData和EntityHandle序列号不匹配, 就可以明确EntityHandle指向的是老的Entity而不是新的, 这样就避免了只用Index标记Entity导致的冲突问题
 <br><br>
 
@@ -96,7 +96,7 @@ Descriptor:\
 
 #### 2.7数据初始化流程
 整个数据初始化的流程, 以Epic官方的CitySample项目为例\
-在CitySample项目中进入PIE, 先来看一下堆栈, 主要是从Player的生成与初始化开始的, 入口在Player上的UMassAgentComponent, 代码比较简单就不再赘述了, 放一下初始化堆栈:
+在CitySample项目中进入PIE, 先来看一下堆栈, 主要是从Player的生成与初始化开始的, 入口在Player上的UMassAgentComponent, 代码比较简单就不再赘述了, 放一下初始化堆栈:\
 ![image](../Assets/Mass/MassEntityTemplateInitStack.png)
 
 接下来直接来到关键部分, 在UMassAgentComponent注册时, 会返回给UMassAgentSubsystem一个对应的FMassEntityConfig
@@ -113,7 +113,7 @@ Descriptor:\
 
 先讲一下Parent属性, 它就是一个Asset, 用来表示父类FMassEntityConfig, 后续会有一些递归行为用到
 
-Traits属性中直接挑第一个TrafficObstacle, 它只有一个BuildTemplate成员函数
+Traits数组中直接挑第一个TrafficObstacle来到C++中看一下具体实现, 它只有一个BuildTemplate成员函数
 ![image](../Assets/Mass/UMassTrafficObstacleTrait::BuildTemplate.png)
 代码非常简单, 就是向[BuildContext](#BuildContext)里面传入对应的Tag/Fragment之类的
 
@@ -121,9 +121,10 @@ Traits属性中直接挑第一个TrafficObstacle, 它只有一个BuildTemplate�
 先讲一下ConfigGuid的生成, 它是构造/在编辑器内复制的时候(因为编辑器中复制如果不重新申请就重复了)向系统申请的一个GUID
 ![image](../Assets/Mass/FMassEntityConfigConstruct.png)
 
+<a name="BuildContext"></a>
 FMassEntityConfig介绍完毕, 紧接着来到回到RegisterAgentComponent中, 来到EntityConfig.GetOrCreateEntityTemplate:
-![image](../Assets/Mass/FMassEntityConfig::GetOrCreateEntityTemplate.png)
-此处会创建一个FMassEntityTemplateData, 再创建一个<a name="BuildContext"></a>FMassEntityTemplateBuildContext, 并传入对应的TemplateData和TemplateID, TemplateID就是[之前构造/编辑器复制的时候向系统申请的一个GUID](#ConfigGuid)再经过一系列处理得到的
+![image](../Assets/Mass/FMassEntityConfig::GetOrCreateEntityTemplate.png)\
+此处会创建一个FMassEntityTemplateData, 再创建一个FMassEntityTemplateBuildContext, 并传入对应的TemplateData和TemplateID, TemplateID就是[之前构造/编辑器复制的时候向系统申请的一个GUID](#ConfigGuid)再经过一系列处理得到的
 
 来到下面的GetCombinedTraits函数中, 首先会记录访问过的Object
 ![image](../Assets/Mass/GetCombinedTraits.png)
