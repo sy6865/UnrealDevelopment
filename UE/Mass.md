@@ -113,6 +113,7 @@ Descriptor:\
 
 先讲一下Parent属性, 它就是一个Asset, 用来表示父类FMassEntityConfig, 后续会有一些递归行为用到
 
+<a name="BuildTemplate"></a>
 Traits数组中直接挑第一个TrafficObstacle来到C++中看一下具体实现, 它只有一个BuildTemplate成员函数
 ![image](../Assets/Mass/UMassTrafficObstacleTrait::BuildTemplate.png)
 代码非常简单, 就是向[BuildContext](#BuildContext)里面传入对应的Tag/Fragment之类的
@@ -131,3 +132,16 @@ FMassEntityConfig介绍完毕, 紧接着来到回到RegisterAgentComponent中, �
 
 再到GetCombinedTraitsInternal函数中, 这里主要是收集对应的Trait, 然后递归当前FMassEntityConfig的Parent
 ![image](../Assets/Mass/GetCombinedTraitsInternal.png)
+
+Traits收集完毕, 回到GetOrCreateEntityTemplate函数中, 来到BuildFromTraits
+![image](../Assets/Mass/GetOrCreateEntityTemplate:BuildFromTraits.png)
+![image](../Assets/Mass/BuildFromTraits.png)
+里面进行了[BuildTamplate操作](#BuildTamplate), 同时移除了一些被请求移除的Tag等
+
+回到GetOrCreateEntityTemplate函数中, 来到SetTemplateName, 将ConfigOwner的内幕赋给TemplateData
+![image](../Assets/Mass/GetOrCreateEntityTemplate:BuildFromTraits.png)
+最后调用TemplateRegistry.FindOrAddTemplate, 将TemplateID与对应的Template注册到MassSpawnerSubsystem的TemplateRegistry中并返回刚刚构造的FMassEntityTemplate
+
+而Component注册的最后, 上面注册的FMassEntityTemplate的ID会被返回记录到Component上
+![image](../Assets/Mass/RegisterWithEntitySubsystem.png)
+至此整个数据初始化流程结束
