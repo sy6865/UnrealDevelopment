@@ -116,7 +116,7 @@ Descriptor:\
 <a name="BuildTemplate"></a>
 Traits数组中直接挑第一个TrafficObstacle来到C++中看一下具体实现, 它只有一个BuildTemplate成员函数
 ![image](../Assets/Mass/UMassTrafficObstacleTrait::BuildTemplate.png)
-代码非常简单, 就是向[BuildContext](#BuildContext)里面传入对应的Tag/Fragment之类的
+代码非常简单, 就是向[BuildContext](#BuildContext)里面传入对应的Tag/Fragment之类的, 还有就是需要依赖的其它Fragment, 因为Trait需要多个Fragment的组合, 并且Trait之间也有依赖. 为什么要用Trait来添加Fragment呢? 因为如果是直接用Archetype的话, 粒度太小, 需要详细列出所有Fragment, 而某些可复用的特征(比如AI行为/渲染等)由多个Fragment组成, 所以可以用OOP思想再封装一层, 内部实现上用DOD, 使用体验上用OOP
 
 <a name="ConfigGuid"></a>
 先讲一下ConfigGuid的生成, 它是构造/在编辑器内复制的时候(因为编辑器中复制如果不重新申请就重复了)向系统申请的一个GUID\
