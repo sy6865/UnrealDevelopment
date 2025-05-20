@@ -31,7 +31,7 @@ ECS架构本身就是利用SOA提升Cache的命中率, 并利用SIMD指令来加
 ![image](../Assets/Mass/OOP与DOD.png)
 <br><br>
 
-### 2.MASS框架
+### 2.MASS框架内存布局
 ECS架构中E/C/S分别代表什么?
 把数据分成一个个Component, 然后由Component组成Entity, 再用System使用逻辑对Component进行处理:\
 ![image](../Assets/Mass/EntityComponentSystemOverview.png)
@@ -98,7 +98,7 @@ Descriptor:\
 ![image](../Assets/Mass/MassDescriptorBitSet2.png)
 <br><br>
 
-#### 2.7数据初始化流程
+### 3.数据初始化流程
 整个数据初始化的流程, 以Epic官方的CitySample项目为例\
 在CitySample项目中进入PIE, 先来看一下堆栈, 主要是从Player的生成与初始化开始的, 入口在Player上的UMassAgentComponent, 代码比较简单就不再赘述了, 放一下初始化堆栈:\
 ![image](../Assets/Mass/MassEntityTemplateInitStack.png)
