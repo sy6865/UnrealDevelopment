@@ -98,8 +98,8 @@ Descriptor:\
 ![image](../Assets/Mass/MassDescriptorBitSet2.png)
 <br><br>
 
-### 3.数据初始化流程
-整个数据初始化的流程, 以Epic官方的CitySample项目为例\
+### 3.初始化流程
+整个初始化的流程, 以Epic官方的CitySample项目为例\
 在CitySample项目中进入PIE, 先来看一下堆栈, 主要是从Player的生成与初始化开始的, 入口在Player上的UMassAgentComponent, 代码比较简单就不再赘述了, 放一下初始化堆栈:\
 ![image](../Assets/Mass/MassEntityTemplateInitStack.png)
 
@@ -146,5 +146,18 @@ Traits收集完毕, 回到GetOrCreateEntityTemplate函数中, 来到BuildFromTra
 最后调用TemplateRegistry.FindOrAddTemplate, 将TemplateID与对应的Template注册到MassSpawnerSubsystem的TemplateRegistry中并返回刚刚构造的FMassEntityTemplate
 
 而Component注册的最后, 上面注册的FMassEntityTemplate的ID会被返回记录到Component上
-![image](../Assets/Mass/RegisterWithEntitySubsystem.png)\
-至此整个数据初始化流程结束
+![image](../Assets/Mass/RegisterWithEntitySubsystem.png)
+
+回到GetOrCreateEntityTemplate函数中, 再来到最后一行的FindOrAddTemplate
+![image](../Assets/Mass/GetOrCreateEntityTemplate:BuildFromTraits.png)
+
+这里给TemplateIDToTemplateMap添加了一个以TemplateID为Key, FMassEntityTemplate为Value的键值对
+![image](../Assets/Mass/FMassEntityTemplateRegistry::FindOrAddTemplate.png)
+
+而MakeFinalTemplate中构造了一个FMassEntityTemplate
+![image](../Assets/Mass/FMassEntityTemplate::MakeFinalTemplate.png)
+
+来到FMassEntityTemplate的构造函数中, 这里进行了Template对应Archetype的创建, 并把最后的Handle返回给ArchetypeHandle本身
+![image](../Assets/Mass/FMassEntityTemplateConstruct.png)
+
+进一步看一下CreateArchetype, 
