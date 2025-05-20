@@ -93,8 +93,9 @@ Descriptor:\
 以上数据的描述都存储在ArchetypeData的CompositionDescriptor中, 顾名思义它是用来描述内存中的数据排布:\
 ![image](../Assets/Mass/FMassArchetypeData:CompositionDescriptor.png)\
 ![image](../Assets/Mass/FMassArchetypeCompositionDescriptor.png)\
-![image](../Assets/Mass/MassDescriptorBitSet.png)
-可以看到在Descriptor中有许多BitSet, 它们的作用是记录不同的UScriptStruct类型, 比如向Fragments中Add一个继承自FMassFragment的类型, 会将Fragments中对应的位设为1. BitSet在某些情况可以用来进行快速的位运算过滤, 比如查询Archetype是否含有特定的Fragment时. TStructTypeBitSet的具体原理此处不再赘述
+![image](../Assets/Mass/MassDescriptorBitSet1.png)
+可以看到在Descriptor中有许多BitSet, 它们的作用是记录不同的UScriptStruct类型, 用来在创建Archetype时传入类型信息. 比如向Fragments中Add一个继承自FMassFragment的类型, 会将Fragments中对应的位设为1, 而且这样做大大节省了内存. BitSet在某些情况可以用来进行快速的位运算过滤, 比如查询Archetype是否含有特定的Fragment时. TStructTypeBitSet的具体原理此处不再赘述
+![image](../Assets/Mass/MassDescriptorBitSet2.png)
 <br><br>
 
 #### 2.7数据初始化流程
@@ -119,7 +120,7 @@ Descriptor:\
 <a name="BuildTemplate"></a>
 Traits数组中直接挑第一个TrafficObstacle来到C++中看一下具体实现, 它只有一个BuildTemplate成员函数
 ![image](../Assets/Mass/UMassTrafficObstacleTrait::BuildTemplate.png)
-代码非常简单, 就是向[Descriptor](#Descriptor)里面传入对应的Tag/Fragment之类的, 还有就是需要依赖的其它Fragment, 因为Trait需要多个Fragment的组合, 并且Trait之间也有依赖. 为什么要用Trait来添加Fragment呢? 因为如果是直接用Archetype的话, 粒度太小, 需要详细列出所有Fragment, 而某些可复用的特征(比如AI行为/渲染等)由多个Fragment组成, 所以可以用OOP思想再封装一层, 内部实现上用DOD, 使用体验上用OOP
+代码非常简单, 就是通过BuildContext向[Descriptor](#Descriptor)里面传入对应的Tag/Fragment之类的, 还有就是需要依赖的其它Fragment, 因为Trait需要多个Fragment的组合, 并且Trait之间也有依赖. 为什么要用Trait来添加Fragment呢? 因为如果是直接用Archetype的话, 粒度太小, 需要详细列出所有Fragment, 而某些可复用的特征(比如AI行为/渲染等)由多个Fragment组成, 所以可以用OOP思想再封装一层, 内部实现上用DOD, 使用体验上用OOP
 
 <a name="ConfigGuid"></a>
 先讲一下ConfigGuid的生成, 它是构造/在编辑器内复制的时候(因为编辑器中复制如果不重新申请就重复了)向系统申请的一个GUID\
