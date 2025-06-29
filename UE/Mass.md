@@ -141,7 +141,7 @@ Traits收集完毕, 回到GetOrCreateEntityTemplate函数中, 来到BuildFromTra
 ![image](../Assets/Mass/BuildFromTraits.png)
 里面进行了[BuildTamplate操作](#BuildTamplate), 同时移除了一些被请求移除的Tag等
 
-回到GetOrCreateEntityTemplate函数中, 来到SetTemplateName, 将ConfigOwner的内幕赋给TemplateData
+回到GetOrCreateEntityTemplate函数中, 来到SetTemplateName, 将ConfigOwner的Name赋给TemplateData
 ![image](../Assets/Mass/GetOrCreateEntityTemplate:BuildFromTraits.png)
 最后调用TemplateRegistry.FindOrAddTemplate, 将TemplateID与对应的Template注册到MassSpawnerSubsystem的TemplateRegistry中并返回刚刚构造的FMassEntityTemplate
 
@@ -160,4 +160,18 @@ Traits收集完毕, 回到GetOrCreateEntityTemplate函数中, 来到BuildFromTra
 来到FMassEntityTemplate的构造函数中, 这里进行了Template对应Archetype的创建, 并把最后的Handle返回给ArchetypeHandle本身
 ![image](../Assets/Mass/FMassEntityTemplateConstruct.png)
 
-进一步看一下CreateArchetype, 
+进一步看一下CreateArchetype, 先根据Descriptor对当前的Archetype计算对应的哈希, 然后检查缓存, 如果已经缓存过就直接取出对应的ArchetypeDataPtr
+![image](../Assets/Mass/FMassEntityManager::CreateArchetype1.png)
+
+之后主要是ArchetypeData的创建和做一些缓存
+![image](../Assets/Mass/FMassEntityManager::CreateArchetype2.png)
+
+再看一下ArchetypeData的初始化阶段, 里面主要是对传入的Descriptor的一些信息处理
+![image](../Assets/Mass/FMassArchetypeData::Initialize.png)
+
+来到ConfigureFragments()函数, 这里缓存了FragmentType的关系和计算了容纳的Entity数量, 并记录不同类型的Fragments在内存中的起点
+![image](../Assets/Mass/FMassArchetypeData::ConfigureFragments1.png)
+![image](../Assets/Mass/FMassArchetypeData::ConfigureFragments2.png)
+
+Archetype创建完成, 返回一个ArchetypeHandle, 里面其实就是一个FMassArchetypeData类型的智能指针
+![image](../Assets/Mass/FMassEntityManager::CreateArchetype3.png)
