@@ -94,8 +94,12 @@ Descriptor:\
 ![image](../Assets/Mass/FMassArchetypeData:CompositionDescriptor.png)\
 ![image](../Assets/Mass/FMassArchetypeCompositionDescriptor.png)\
 ![image](../Assets/Mass/MassDescriptorBitSet1.png)
-可以看到在Descriptor中有许多BitSet, 它们的作用是记录不同的UScriptStruct类型, 用来在创建Archetype时传入类型信息. 比如向Fragments中Add一个继承自FMassFragment的类型, 会将Fragments中对应的位设为1, 而且这样做大大节省了内存. BitSet在某些情况可以用来进行快速的位运算过滤, 比如查询Archetype是否含有特定的Fragment时. TStructTypeBitSet的具体原理此处不再赘述
+可以看到在Descriptor中有许多BitSet, 它们的作用是记录不同的UScriptStruct类型, 用来在创建Archetype时传入类型信息. 比如向Descriptor的Fragments中Add一个继承自FMassFragment的类型, 会将Fragments中对应的位设为1, 把各个结构UStruct类型信息存在了一个数组里, 而且这样做大大节省了内存. BitSet在某些情况可以用来进行快速的位运算过滤, 比如查询Archetype是否含有特定的Fragment时. TStructTypeBitSet的具体原理此处不再赘述
 ![image](../Assets/Mass/MassDescriptorBitSet2.png)
+<br><br>
+
+#### 2.7FEntityHandle
+
 <br><br>
 
 ### 3.初始化流程
