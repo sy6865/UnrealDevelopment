@@ -99,6 +99,12 @@ Descriptor:\
 <br><br>
 
 #### 2.7FEntityHandle
+先看一下由FEntityHandle到FMassArchetypeChunk对应的索引数据结构:
+![image](../Assets/Mass/FMassEntityHandleDataStructure1.png)
+![image](../Assets/Mass/FMassEntityHandleDataStructure2.png)
+一个EntityHandle只需要一个32位Index就能知道自己属于哪个EntityData, 从而定位到对应的ArchetypeData, 还有一个序列号矫正, 比如Archetype升级了版本号已经改变了, 但原来的数据是外部存储的, 那么这个EntityHandle的序列号还是旧的, 这样就知道Handle已经失效了. ArchetypeData里面也有个EntityMap作为全局Index到内部Index的转换, 用来查找对应的Chunk
+这样通过每个Chunk的Entity数量就可以得出对应的是第几个Chunk的第几号位置:
+![image](../Assets/Mass/FMassEntityHandleDataStructure3.png)
 
 <br><br>
 
