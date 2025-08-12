@@ -106,8 +106,18 @@ Descriptor:\
 
 这样通过每个Chunk的Entity数量就可以得出对应的是第几个Chunk的第几号位置:
 ![image](../Assets/Mass/FMassEntityHandleDataStructure3.png)
-
 <br><br>
+
+#### 2.8FMassEntityManager
+所有Archetype的定义信息, 以及所有Entity都存储在一个全局的EntityManager中, 而EntityManager能在UMassEntitySubsystem中找到:
+![image](../Assets/Mass/UMassEntitySubsystem:EntityManager.png)
+
+来看一下EntityManager的结构, 首先是EntityStorage, 它存储了所有的Entity数据
+![image](../Assets/Mass/FMassEntityManager:EntityStorage.png)
+
+接下来就是全局参数和所有Archetype的数据
+![image](../Assets/Mass/FMassEntityManager:Variables.png)
+
 
 ### 3.初始化流程
 整个初始化的流程, 以Epic官方的CitySample项目为例\
