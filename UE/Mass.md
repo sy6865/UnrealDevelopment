@@ -118,8 +118,26 @@ Descriptor:\
 接下来就是全局参数和所有Archetype的数据
 ![image](../Assets/Mass/FMassEntityManager:Variables.png)
 
+其他的就是一些对Archetype还有Entity操作的接口, 比如创建Archetype, 创建/移除Entity等, 这里就不再赘述了
 
-### 3.初始化流程
+最后看一下Entity的创建过程和MASS的数据结构组织
+![image](../Assets/Mass/FMassEntityManager::CreateEntity.png)
+![image](../Assets/Mass/MassDataStructure.png)
+需要注意的是, 删除Entity会造成空洞, 不过下次再创建Entity的时候会被重复利用
+改变Entity的Archetype会导致创建一个新的Archetype并迁移所有数据, 性能消耗非常大
+<br><br>
+
+### 3.运行机制
+MASS在运行时需要筛选到我们关心的数据, 然后处理它们
+<br><br>
+
+#### 3.1数据筛选
+先筛选出合适的Archetype, 再对chunk进行筛选. 这一步主要是通过Tags, Fragments, ChunkFragments, SharedFragments分别定义上过滤器规则进行筛选, 筛选出需要的chunk并返回出来
+
+
+<br><br>
+
+### 4.初始化流程
 整个初始化的流程, 以Epic官方的CitySample项目为例\
 在CitySample项目中进入PIE, 先来看一下堆栈, 主要是从Player的生成与初始化开始的, 入口在Player上的UMassAgentComponent, 代码比较简单就不再赘述了, 放一下初始化堆栈:\
 ![image](../Assets/Mass/MassEntityTemplateInitStack.png)
