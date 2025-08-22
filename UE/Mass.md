@@ -131,8 +131,18 @@ Descriptor:\
 MASS在运行时需要筛选到我们关心的数据, 然后处理它们
 <br><br>
 
-#### 3.1数据筛选
-先筛选出合适的Archetype, 再对chunk进行筛选. 这一步主要是通过Tags, Fragments, ChunkFragments, SharedFragments分别定义上过滤器规则进行筛选, 筛选出需要的chunk并返回出来
+#### 3.1Phase初始化
+运行的每一帧分为很多个Phase, 具体如下\
+![image](../Assets/Mass/EMassProcessingPhase.png)
+
+在FMassProcessingPhaseManager的Initialize阶段, 会对Phase进行初始化, 还有PhaseProcessor的创建
+![image](../Assets/Mass/FMassProcessingPhaseManager::Initialize.png)
+![image](../Assets/Mass/FMassProcessingPhaseManager::Initialize_CallStack.png)
+
+#### 3.2数据筛选
+先筛选出合适的Archetype, 再对chunk进行筛选. 这一步主要是通过Tags, Fragments, ChunkFragments, SharedFragments分别定义上过滤器规则进行筛选, 筛选出需要的chunk并返回
+
+
 
 
 <br><br>
