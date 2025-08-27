@@ -139,7 +139,19 @@ MASS在运行时需要筛选到我们关心的数据, 然后处理它们
 ![image](../Assets/Mass/FMassProcessingPhaseManager::Initialize.png)
 ![image](../Assets/Mass/FMassProcessingPhaseManager::Initialize_CallStack.png)
 
-#### 3.2数据筛选
+
+#### 3.2Processor初始化
+在引擎的初始化阶段, 会收集引擎中所有UMassProcessor的派生类型, 并且根据它们的ShouldAutoAddToGlobalList和ProcessingPhase分配到不同的PhaseConfig中
+![image](Assets/Mass/UMassEntitySettings::BuildProcessorList.png)
+
+之后在PhaseStart阶段时, 先进行检查修改，有新的Archetypes创建/Processors需要Rebuild等, 然后根据这些来判断是否需要重新构建对应的UMassCompositeProcessor
+![image](../Assets/Mass/FMassProcessingPhaseManager::OnPhaseStart.png)
+
+对Processor的依赖进行处理, 因为Processor与它对应的Fragment有依赖关系
+![image](../Assets/Mass/FMassPhaseProcessorConfigurationHelper::Configure.png)
+
+
+#### 3.3运行时数据筛选
 先筛选出合适的Archetype, 再对chunk进行筛选. 这一步主要是通过Tags, Fragments, ChunkFragments, SharedFragments分别定义上过滤器规则进行筛选, 筛选出需要的chunk并返回
 
 
