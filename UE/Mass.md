@@ -138,18 +138,38 @@ MASS在运行时需要筛选到我们关心的数据, 然后处理它们
 在FMassProcessingPhaseManager的Initialize阶段, 会对Phase进行初始化, 还有PhaseProcessor的创建
 ![image](../Assets/Mass/FMassProcessingPhaseManager::Initialize.png)
 ![image](../Assets/Mass/FMassProcessingPhaseManager::Initialize_CallStack.png)
-
+<br><br>
 
 #### 3.2Processor初始化
-在引擎的初始化阶段, 会收集引擎中所有UMassProcessor的派生类型, 并且根据它们的ShouldAutoAddToGlobalList和ProcessingPhase分配到不同的PhaseConfig中
-![image](Assets/Mass/UMassEntitySettings::BuildProcessorList.png)
+Processor顾名思义, 是最终用来处理Fragment数据, 处理业务逻辑的地方. 在引擎的初始化阶段, 会收集引擎中所有UMassProcessor的派生类型, 并且根据它们的ShouldAutoAddToGlobalList和ProcessingPhase分配到不同的PhaseConfig中
+![image](../Assets/Mass/UMassEntitySettings::BuildProcessorList.png)
 
-之后在PhaseStart阶段时, 先进行检查修改，有新的Archetypes创建/Processors需要Rebuild等, 然后根据这些来判断是否需要重新构建对应的UMassCompositeProcessor
+之后在PhaseStart阶段时, 先进行检查修改，有新的Archetypes创建/Processors需要Rebuild等, 然后根据这些来判断是否需要重新构建当前Phase对应的UMassCompositeProcessor
 ![image](../Assets/Mass/FMassProcessingPhaseManager::OnPhaseStart.png)
 
-对Processor的依赖进行处理, 因为Processor与它对应的Fragment有依赖关系
-![image](../Assets/Mass/FMassPhaseProcessorConfigurationHelper::Configure.png)
+对Processor的依赖进行处理, 因为一个Processor可能与其它Processor之间有依赖关系, 需要等待其它Processor处理完对应数据后再执行, 详细可以见依赖节点(AllNodes)的创建流程和FMassProcessorDependencySolver
+![image](../Assets/Mass/FMassPhaseProcessorConfigurationHelper::Configure1.png)
+![image](../Assets/Mass/FMassProcessorDependencySolver::ResolveDependencies.png)
+![image](../Assets/Mass/FMassProcessorDependencySolver::CreateNodes.png)
 
+<a name="Processors的添加"></a>
+在依赖关系处理完成之后, 会更新Phase对应的UMassCompositeProcessor, 将真正处理业务逻辑的Processors添加到其中
+![image](../Assets/Mass/FMassPhaseProcessorConfigurationHelper::Configure2.png)
+![image](../Assets/Mass/UMassCompositeProcessor::UpdateProcessorsCollection.png)
+<br><br>
+
+#### 3.3Processor的运行
+在OnPhaseStart执行完, 也就是Processor初始化完成之后, 会开始当前Phase的Processor执行过程, 这里可以通过修改头文件开启并行. 官方默认是单线程跑的, 所以这里直接来到UE::Mass::Executor::Run
+![image](../Assets/Mass/FMassProcessingPhase:UE::Mass::Executor::Run.png)
+
+继续深入, 来到RunProcessorsView的ExecuteProcessors, 里面会调用Processor的CallExecute进行Processor的执行
+![image](../Assets/Mass/RunProcessorsView.png)
+![image](../Assets/Mass/ExecuteProcessors.png)
+
+上面是Phase对应的CompositeProcessor的执行, 在它的Execute中会执行Phase对应的所有业务逻辑相关的Processors, 也就是[之前在Processor初始化阶段往UMassCompositeProcessor中添加的Processors](#Processors的添加)
+![image](../Assets/Mass/UMassCompositeProcessor::Execute.png)
+
+<br><br>
 
 #### 3.3运行时数据筛选
 先筛选出合适的Archetype, 再对chunk进行筛选. 这一步主要是通过Tags, Fragments, ChunkFragments, SharedFragments分别定义上过滤器规则进行筛选, 筛选出需要的chunk并返回
@@ -159,8 +179,8 @@ MASS在运行时需要筛选到我们关心的数据, 然后处理它们
 
 <br><br>
 
-### 4.初始化流程
-整个初始化的流程, 以Epic官方的CitySample项目为例\
+### 4.数据初始化流程
+整个数据初始化的流程, 以Epic官方的CitySample项目为例\
 在CitySample项目中进入PIE, 先来看一下堆栈, 主要是从Player的生成与初始化开始的, 入口在Player上的UMassAgentComponent, 代码比较简单就不再赘述了, 放一下初始化堆栈:\
 ![image](../Assets/Mass/MassEntityTemplateInitStack.png)
 
