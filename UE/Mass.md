@@ -134,6 +134,7 @@ MASS在运行时需要筛选到我们关心的数据, 然后处理它们
 #### 3.1Phase初始化
 运行的每一帧分为很多个Phase, 具体如下\
 ![image](../Assets/Mass/EMassProcessingPhase.png)
+和引擎的Tick阶段类似, 也需要根据Phase来决定, 每一帧的每个阶段来做什么, 比如AI相关的, 要在PrePhysics进行等等
 
 在FMassProcessingPhaseManager的Initialize阶段, 会对Phase进行初始化, 还有PhaseProcessor的创建
 ![image](../Assets/Mass/FMassProcessingPhaseManager::Initialize.png)
@@ -211,8 +212,19 @@ Fragment信息传递完成之后, 回到ForEachEntityChunk中
 最后再执行我们在业务层写的函数, 就可以从Context中拿到所需的Fragment了
 ![image](../Assets/Mass/FMassArchetypeData::ExecuteFunction2.png)
 ![image](../Assets/Mass/UMassCharacterMovementToMassTranslator::Execute.png)
-
 <br><br>
+
+#### 3.5Entity之间通信
+在Mass中, Entity之间通信依赖于UMassSignalSubsystem, 可以理解为对应的SignalProcessor向UMassSignalSubsystem订阅, 收到来自Subsystem的信号之后, 对Entity执行一些操作
+
+以UMassStateTreeProcessor为例, Initialize阶段这里向SignalSubsystem注册了非常多的Signal类型
+![image](../Assets/Mass/UMassStateTreeProcessor::Initialize.png)
+
+UMassStateTreeActivationProcessor在执行阶段, 会根据一系列条件, 挑选出激活StateTree的Entities, 然后调用UMassSignalSubsysem的SignalEntities来向UMassStateTreeProcessor发信号
+![image](../Assets/Mass/UMassStateTreeActivationProcessor::Execute.png)
+
+最后这些Entities都会在订阅方的SignalEntities函数中接收, 过程十分简单, 建议从UMassStateTreeProcessor入手
+![image](../Assets/Mass/UMassStateTreeProcessor::SignalEntities.png)
 
 ### 4.官方CitySample的数据初始化流程解析
 以Epic官方的CitySample项目为例\
