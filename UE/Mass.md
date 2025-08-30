@@ -133,7 +133,7 @@ MASS在运行时需要筛选到我们关心的数据, 然后处理它们
 
 #### 3.1Phase初始化
 运行的每一帧分为很多个Phase, 具体如下\
-![image](../Assets/Mass/EMassProcessingPhase.png)
+![image](../Assets/Mass/EMassProcessingPhase.png)\
 和引擎的Tick阶段类似, 也需要根据Phase来决定, 每一帧的每个阶段来做什么, 比如AI相关的, 要在PrePhysics进行等等
 
 在FMassProcessingPhaseManager的Initialize阶段, 会对Phase进行初始化, 还有PhaseProcessor的创建
