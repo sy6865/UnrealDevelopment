@@ -225,6 +225,7 @@ UMassStateTreeActivationProcessor在执行阶段, 会根据一系列条件, 挑�
 
 最后这些Entities都会在订阅方的SignalEntities函数中接收, 过程十分简单, 建议从UMassStateTreeProcessor入手
 ![image](../Assets/Mass/UMassStateTreeProcessor::SignalEntities.png)
+<br><br>
 
 ### 4.官方CitySample的数据初始化流程解析
 以Epic官方的CitySample项目为例\
