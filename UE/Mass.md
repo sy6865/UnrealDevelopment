@@ -176,6 +176,7 @@ Processor顾名思义, 是最终用来处理Fragment数据, 处理业务逻辑�
 
 #### 3.4运行时数据筛选
 Mass的业务层面, 通过EntityQuery进行数据筛选, 先筛选出合适的Archetype, 再对chunk进行筛选. 这一步主要是通过Tags, Fragments, ChunkFragments, SharedFragments分别定义上过滤器规则进行筛选, 筛选出需要的chunk并返回
+![image](../Assets/Mass/FMassEntityQuery.png)
 
 先来看一下EntityQuery的初始化
 ![image](../Assets/Mass/UMassCharacterMovementToMassTranslator::ConfigureQueries().png)
@@ -191,13 +192,26 @@ Mass的业务层面, 通过EntityQuery进行数据筛选, 先筛选出合适的A
 ![image](../Assets/Mass/FMassEntityQuery::CacheArchetypes1.png)
 ![image](../Assets/Mass/FMassEntityManager::GetMatchingArchetypes.png)
 ![image](../Assets/Mass/FMassFragmentRequirements::DoesArchetypeMatchRequirements.png)
-可以看到这一步会调用EntityQuery的DoesArchetypeMatchRequirements函数, 里面传入了Archetype对应的[Descriptor](#Descriptor), 之前Descriptor中存储的Archetype信息BitSet在这里发挥了用处, 只需要通过位运算就能得到当前的Archetype是否是EntityQuery想要的.
+可以看到这一步会调用EntityQuery的DoesArchetypeMatchRequirements函数, 里面传入了Archetype对应的[Descriptor](#Descriptor), 之前Descriptor中存储的Archetype信息BitSet在这里发挥了用处, 只需要通过位运算就能得到当前的Archetype是否是EntityQuery想要的, 效率非常的高
 
 回到CacheArchetypes中, 在获得需要的Archetype之后, 就可以开始获取EntityQuery需要的Fragment数据了
 ![image](../Assets/Mass/FMassEntityQuery::CacheArchetypes2.png)
 
-过滤完成之后, 最后回来调用业务层传入的函数, 至此整个运行时数据筛选过程完成
+CacheArchetypes执行完成后, 会来到FMassExecutionContext的SetFragmentRequrements
 ![image](../Assets/Mass/FMassEntityQuery::ForEachEntityChunk2.png)
+![image](../Assets/Mass/FMassExecutionContext::SetFragmentRequirements.png)
+这里会将EntityQuery中所需的Fragment信息传递给ExecutionContext
+
+Fragment信息传递完成之后, 回到ForEachEntityChunk中
+![image](../Assets/Mass/FMassEntityQuery::ForEachEntityChunk3.png)
+![image](../Assets/Mass/FMassArchetypeData::ExecuteFunction1.png)
+![image](../Assets/Mass/FMassArchetypeData::BindEntityRequirements.png)
+经过一系列操作后, 先将对应的一个Chunk中的所需Fragment数据装到一个FragmentView中, 给到对应的ExecutionContext, 至此数据筛选完成并且返回了一个Chunk的数据, 对CPU Cache非常友好
+
+最后再执行我们在业务层写的函数, 就可以从Context中拿到所需的Fragment了
+![image](../Assets/Mass/FMassArchetypeData::ExecuteFunction2.png)
+![image](../Assets/Mass/UMassCharacterMovementToMassTranslator::Execute.png)
+
 <br><br>
 
 ### 4.官方CitySample的数据初始化流程解析
