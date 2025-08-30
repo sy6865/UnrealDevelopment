@@ -169,18 +169,39 @@ Processor顾名思义, 是最终用来处理Fragment数据, 处理业务逻辑�
 上面是Phase对应的CompositeProcessor的执行, 在它的Execute中会执行Phase对应的所有业务逻辑相关的Processors, 也就是[之前在Processor初始化阶段往UMassCompositeProcessor中添加的Processors](#Processors的添加)
 ![image](../Assets/Mass/UMassCompositeProcessor::Execute.png)
 
+以UMassCharacterMovementToMassTranslator为例, 看一下Execute的时候做了什么
+![image](../Assets/Mass/UMassCharacterMovementToMassTranslator::Execute.png)
+这里使用EntityQuery, 在ForEachEntityChunk中获取了对应的一系列Fragment, 通过CharacterMovement上的信息更新了对应Entity中的Location和Velocity, 那么EntityQuery和对应的ForEachEntityChunk是怎么得到对应的Entity中的Fragment数据的?
 <br><br>
 
 #### 3.4运行时数据筛选
-先筛选出合适的Archetype, 再对chunk进行筛选. 这一步主要是通过Tags, Fragments, ChunkFragments, SharedFragments分别定义上过滤器规则进行筛选, 筛选出需要的chunk并返回
+Mass的业务层面, 通过EntityQuery进行数据筛选, 先筛选出合适的Archetype, 再对chunk进行筛选. 这一步主要是通过Tags, Fragments, ChunkFragments, SharedFragments分别定义上过滤器规则进行筛选, 筛选出需要的chunk并返回
 
+先来看一下EntityQuery的初始化
+![image](../Assets/Mass/UMassCharacterMovementToMassTranslator::ConfigureQueries().png)
+可以看到往EntityQuery中添加了所需的一系列Fragment和Tag
 
+最后都被添加到了EntityQuery中对应的BitSet里
+![image](../Assets/Mass/FMassFragmentRequirements.png)
 
+然后来看一下ForEachEntityChunk里面做了什么, 还是以UMassCharacterMovementToMassTranslator为示例, 直接来到CacheArchetypes这一步:
+![image](../Assets/Mass/FMassEntityQuery::ForEachEntityChunk1.png)
 
+前面会做一些Archetype是否更新之类的检查, 直接跳过, 来到GetMatchingArchetypes:
+![image](../Assets/Mass/FMassEntityQuery::CacheArchetypes1.png)
+![image](../Assets/Mass/FMassEntityManager::GetMatchingArchetypes.png)
+![image](../Assets/Mass/FMassFragmentRequirements::DoesArchetypeMatchRequirements.png)
+可以看到这一步会调用EntityQuery的DoesArchetypeMatchRequirements函数, 里面传入了Archetype对应的[Descriptor](#Descriptor), 之前Descriptor中存储的Archetype信息BitSet在这里发挥了用处, 只需要通过位运算就能得到当前的Archetype是否是EntityQuery想要的.
+
+回到CacheArchetypes中, 在获得需要的Archetype之后, 就可以开始获取EntityQuery需要的Fragment数据了
+![image](../Assets/Mass/FMassEntityQuery::CacheArchetypes2.png)
+
+过滤完成之后, 最后回来调用业务层传入的函数, 至此整个运行时数据筛选过程完成
+![image](../Assets/Mass/FMassEntityQuery::ForEachEntityChunk2.png)
 <br><br>
 
-### 4.数据初始化流程
-整个数据初始化的流程, 以Epic官方的CitySample项目为例\
+### 4.官方CitySample的数据初始化流程解析
+以Epic官方的CitySample项目为例\
 在CitySample项目中进入PIE, 先来看一下堆栈, 主要是从Player的生成与初始化开始的, 入口在Player上的UMassAgentComponent, 代码比较简单就不再赘述了, 放一下初始化堆栈:\
 ![image](../Assets/Mass/MassEntityTemplateInitStack.png)
 
